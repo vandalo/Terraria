@@ -60,6 +60,7 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>C:\Users\Ferran\Desktop\Videojocs\videojocsUPC\OpenGL2DGame\p03 %28Bubble returns!%29\freeglut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)2DEngine.exe</OutputFile>
@@ -67,6 +68,7 @@
       <ProgramDatabaseFile>$(OutDir)2DEngine.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>C:\Users\Ferran\Desktop\Videojocs\videojocsUPC\OpenGL2DGame\p03 %28Bubble returns!%29\freeglut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
