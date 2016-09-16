@@ -1,4 +1,4 @@
-﻿Build started 16/09/2016 15:05:13.
+﻿Build started 16/09/2016 16:01:11.
      1>Project "C:\Users\Ferran\Desktop\Videojocs\videojocsUPC\OpenGL2DGame\p03 (Bubble returns!)\2DEngine.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Ferran\Desktop\Videojocs\videojocsUPC\OpenGL2DGame\p03 (Bubble returns!)\freeglut\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0710 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt cBicho.cpp cData.cpp cGame.cpp cPlayer.cpp cScene.cpp cTexture.cpp GLUTMain.cpp
@@ -34,4 +34,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:06.94
+Time Elapsed 00:00:04.13
