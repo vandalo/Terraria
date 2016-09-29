@@ -25,6 +25,8 @@ public:
 
 private:
 	void initShaders();
+	void DrawBackgroundNormal(int tex_id);
+	bool LoadImage(int, char*, int);
 
 private:
 	TileMap *map;
