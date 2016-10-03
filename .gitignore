@@ -187,3 +187,14 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+2Dgame/02-Bubble/02-Bubble.VC.VC.opendb
+2DGame/02-Bubble/02-Bubble.VC.db
+2DGame/02-Bubble/02-Bubble/freeglut.dll
+2DGame/02-Bubble/02-Bubble/freetype-config
+2DGame/02-Bubble/02-Bubble/freetype6.dll
+2DGame/02-Bubble/02-Bubble/glew32.dll
+2DGame/02-Bubble/02-Bubble/glm/
+libs/*
+*.vcxproj
+2DGame/02-Bubble/02-Bubble/02-Bubble.vcxproj
