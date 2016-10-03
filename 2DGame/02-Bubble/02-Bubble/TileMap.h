@@ -16,6 +16,13 @@
 class TileMap
 {
 
+
+struct Tile
+{
+	int *id;
+	int *vida;
+};
+
 public:
 	// Tile maps can only be created inside an OpenGL context
 	static TileMap *createTileMap(const string &levelFile, const glm::vec2 &minCoords, ShaderProgram &program);
@@ -45,7 +52,7 @@ private:
 	int tileSize, blockSize;
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
-	int *map;
+	Tile map;
 
 };
 

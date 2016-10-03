@@ -25,7 +25,6 @@ public:
 
 private:
 	void initShaders();
-	void DrawBackgroundNormal(int tex_id);
 	bool LoadImage(int, char*, int);
 
 private:
@@ -34,6 +33,7 @@ private:
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
+	Texture background;
 
 };
 

@@ -31,6 +31,9 @@ void Scene::init()
 {
 	initShaders();
 	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	
+	background.loadFromFile("images/background_23.png",TEXTURE_PIXEL_FORMAT_RGBA);
+
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
@@ -48,6 +51,7 @@ void Scene::update(int deltaTime)
 
 void Scene::render()
 {
+
 	glm::mat4 modelview;
 	projection = glm::ortho((float)(player->getX() - (SCREEN_WIDTH/2)), float((SCREEN_WIDTH/2) + player->getX()),
 		(float)(SCREEN_HEIGHT / 2) + player->getY(), (float)(player->getY() - (SCREEN_HEIGHT / 2)));
@@ -58,9 +62,18 @@ void Scene::render()
 	modelview = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
+
 	map->render();
 	player->render();
 
+	background.use();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(0, 512, 0);
+	glTexCoord2f(0, 1); glVertex3f(0, 0, 0);
+	glTexCoord2f(1, 1); glVertex3f(640, 0, 0);
+	glTexCoord2f(1, 0); glVertex3f(640, 512, 0);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
 }
 
 void Scene::initShaders()
@@ -92,8 +105,6 @@ void Scene::initShaders()
 	vShader.free();
 	fShader.free();
 }
-
-
 
 
 
