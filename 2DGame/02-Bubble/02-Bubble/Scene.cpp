@@ -30,10 +30,9 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-	
-	background.loadFromFile("images/background_23.png",TEXTURE_PIXEL_FORMAT_RGBA);
+	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);	
 
+	initBackground();
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
@@ -52,6 +51,7 @@ void Scene::update(int deltaTime)
 void Scene::render()
 {
 
+
 	glm::mat4 modelview;
 	projection = glm::ortho((float)(player->getX() - (SCREEN_WIDTH/2)), float((SCREEN_WIDTH/2) + player->getX()),
 		(float)(SCREEN_HEIGHT / 2) + player->getY(), (float)(player->getY() - (SCREEN_HEIGHT / 2)));
@@ -63,17 +63,11 @@ void Scene::render()
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 
+	renderBackground();
 	map->render();
 	player->render();
 
-	background.use();
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0); glVertex3f(0, 512, 0);
-	glTexCoord2f(0, 1); glVertex3f(0, 0, 0);
-	glTexCoord2f(1, 1); glVertex3f(640, 0, 0);
-	glTexCoord2f(1, 0); glVertex3f(640, 512, 0);
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
+
 }
 
 void Scene::initShaders()
@@ -106,5 +100,46 @@ void Scene::initShaders()
 	fShader.free();
 }
 
+void Scene::renderBackground(){
+
+	//Background1
+	glEnable(GL_TEXTURE_2D);
+	background.use();
+	glBindVertexArray(vao);
+	glEnableVertexAttribArray(posLocation);
+	glEnableVertexAttribArray(texCoordLocation);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisable(GL_TEXTURE_2D);
+
+	//Background2
+}
+
+void Scene::initBackground(){
+
+	//Aqui definim la geometria i les cordenades de textura
+	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(512.f, 16.f) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
+
+	//Definim els 24 vertex per pintar la textura 12 per cada triangle
+	float vertices[24] = { 
+		geom[0].x, geom[0].y, texCoords[0].x, texCoords[0].y,
+		geom[1].x, geom[0].y, texCoords[1].x, texCoords[0].y,
+		geom[1].x, geom[1].y, texCoords[1].x, texCoords[1].y,
+		geom[0].x, geom[0].y, texCoords[0].x, texCoords[0].y,
+		geom[1].x, geom[1].y, texCoords[1].x, texCoords[1].y,
+		geom[0].x, geom[1].y, texCoords[0].x, texCoords[1].y };
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_STATIC_DRAW);
+
+	posLocation = texProgram.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
+	texCoordLocation = texProgram.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void *)(2 * sizeof(float)));
+
+	//carreguem textura (el background bo es el 23)
+	background.loadFromFile("images/background_1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+}
 
 

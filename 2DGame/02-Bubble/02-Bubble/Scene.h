@@ -26,11 +26,16 @@ public:
 private:
 	void initShaders();
 	bool LoadImage(int, char*, int);
+	void renderBackground();
+	void initBackground();
 
 private:
 	TileMap *map;
 	Player *player;
 	ShaderProgram texProgram;
+	GLint posLocation, texCoordLocation;
+	GLuint vao;
+	GLuint vbo;
 	float currentTime;
 	glm::mat4 projection;
 	Texture background;
