@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Monster.h"
 #include "Skull.h"
+#include "EyeBoss.h"
 
 
 // Scene contains all the entities of our game.
@@ -37,6 +38,7 @@ private:
 	Player *player;
 	Monster *monsters[256];
 	Skull *skull;
+	EyeBoss * eyeBoss;
 	GLuint numMonsters;
 	ShaderProgram texProgram;
 	GLint posLocation, texCoordLocation;

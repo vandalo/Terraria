@@ -51,6 +51,18 @@ void Scene::init()
 		monsters[i]->setRadiPErseguir(70);
 	}
 
+	//Creem el boss eye
+	eyeBoss = new EyeBoss();
+	eyeBoss->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+	eyeBoss->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
+	eyeBoss->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
+	
+
+	eyeBoss->setRadiPatrulla(60);
+	eyeBoss->setTileMap(map);
+	eyeBoss->setEsMouDreta(false);
+	eyeBoss->setRadiPerseguir(70);
+
 	//Creem el boss skull
 	/*skull = new Skull();
 	skull->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
@@ -84,6 +96,7 @@ void Scene::update(int deltaTime)
 		monsters[i]->update(deltaTime);
 	}
 	//skull->update(deltaTime);
+	eyeBoss->update(currentTime);
 }
 
 void Scene::render()
@@ -107,7 +120,8 @@ void Scene::render()
 	for (int i = 0; i < numMonsters; i++){
 		monsters[i]->render();
 	}
-	skull->render();
+	//skull->render();
+	eyeBoss->render();
 
 
 }
