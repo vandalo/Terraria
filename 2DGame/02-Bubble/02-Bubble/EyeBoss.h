@@ -37,13 +37,13 @@ public:
 private:
 	int vida;
 	float velocitat;
-	bool atackAcavat;
+	bool atackAcavat, patrullar;
 	float direccioAtackX, direccioAtackY;
 	int xInicial, yInicial;
 	glm::ivec2 tileMapDispl, posEyeBoss;
 	glm::vec2 playerPos, posFinalAtack, direccio;
 	int startY, startX;
-	int modo, numAtack;
+	int modo, estat, numAtack;
 	int delay;
 	float deltaPlayer;
 	Texture spritesheet;

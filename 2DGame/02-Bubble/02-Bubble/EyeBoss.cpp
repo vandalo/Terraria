@@ -26,6 +26,8 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	numAtack = 0;
 	rotateSprite = 0;
 	delay = 0;
+	patrullar = true;
+	estat = 1;
 	
 
 	tileMapDispl = tileMapPos;
@@ -37,22 +39,14 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 void EyeBoss::update(int deltaTime)
 {
 	sprite->update(deltaTime);
-
-	glm::vec2 playerPos = Game::instance().getPlayerPos();
-	if ((posEyeBoss.x - playerPos.x) < 36){
-		if (modo == 0) atackAcavat = true;
-		modo = 1;
-	}
-	if (modo == 1){
-		if (numAtack < 3){
+	if (patrullar) doPatrullar(deltaTime);
+	float dist = getDistancia(Game::instance().getPlayerPos(), posEyeBoss);
+	if (dist < 100 || !patrullar){
+		if (estat == 1){
+			patrullar = false;
 			doAtack1();
+			//doPatrullarXtime(deltaTime, 60*5);
 		}
-		else {
-			doPatrullar(deltaTime);
-		}
-	}
-	else {
-		doPatrullar(deltaTime);
 	}
 
 
