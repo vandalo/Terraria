@@ -67,7 +67,9 @@ bool Game::getSpecialKey(int key) const
 	return specialKeys[key];
 }
 
-
+glm::vec2 Game::getPlayerPos(){
+	return scene.getPlayerPos();
+}
 
 
 

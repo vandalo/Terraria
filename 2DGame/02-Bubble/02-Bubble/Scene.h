@@ -6,6 +6,8 @@
 #include "ShaderProgram.h"
 #include "TileMap.h"
 #include "Player.h"
+#include "Monster.h"
+#include "Skull.h"
 
 
 // Scene contains all the entities of our game.
@@ -22,6 +24,7 @@ public:
 	void init();
 	void update(int deltaTime);
 	void render();
+	glm::vec2 getPlayerPos();
 
 private:
 	void initShaders();
@@ -32,6 +35,9 @@ private:
 private:
 	TileMap *map;
 	Player *player;
+	Monster *monsters[256];
+	Skull *skull;
+	GLuint numMonsters;
 	ShaderProgram texProgram;
 	GLint posLocation, texCoordLocation;
 	GLuint vao;

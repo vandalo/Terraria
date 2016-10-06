@@ -4,6 +4,7 @@
 #include "Sprite.h"
 
 
+
 Sprite *Sprite::createSprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 {
 	Sprite *quad = new Sprite(quadSize, sizeInSpritesheet, spritesheet, program);
@@ -20,7 +21,7 @@ Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Te
 												0.f, 0.f, 0.f, 0.f, 
 												quadSize.x, quadSize.y, sizeInSpritesheet.x, sizeInSpritesheet.y, 
 												0.f, quadSize.y, 0.f, sizeInSpritesheet.y};
-
+	textSize = quadSize;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	glGenBuffers(1, &vbo);
@@ -48,9 +49,14 @@ void Sprite::update(int deltaTime)
 	}
 }
 
-void Sprite::render() const
+void Sprite::render(float rotate) const
 {
-	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
+	glm::mat4 modelview = glm::mat4(1.0f);
+
+	modelview = glm::translate(modelview, glm::vec3(position.x + (textSize.x / 2), position.y + (textSize.y / 2), 0.f));
+	modelview = glm::rotate(modelview, rotate, glm::vec3(0, 0, 1));
+	modelview = glm::translate(modelview, glm::vec3(-(textSize.x / 2), -(textSize.y / 2), 0.f));
+
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
 	glEnable(GL_TEXTURE_2D);

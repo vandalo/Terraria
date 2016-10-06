@@ -23,7 +23,7 @@ public:
 	Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program);
 
 	void update(int deltaTime);
-	void render() const;
+	void render(float rotate = 0.f) const;
 	void free();
 
 	void setNumberAnimations(int nAnimations);
@@ -45,6 +45,7 @@ private:
 	float timeAnimation;
 	glm::vec2 texCoordDispl;
 	vector<AnimKeyframes> animations;
+	glm::vec2 textSize;
 
 };
 

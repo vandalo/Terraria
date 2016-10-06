@@ -30,13 +30,47 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);	
+	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	numMonsters = 2;
 
 	initBackground();
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 	player->setTileMap(map);
+
+	//monsters sera un array i farem un for
+	for (int i = 0; i < numMonsters; i++){
+		monsters[i] = new Monster();
+		monsters[i]->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+		monsters[i]->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 300 * (i+1), INIT_PLAYER_Y_TILES * map->getTileSize()));
+		monsters[i]->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 300 * (i+1), INIT_PLAYER_Y_TILES * map->getTileSize()));
+		monsters[i]->setRadiPatrulla(60);
+		monsters[i]->setTileMap(map);
+		monsters[i]->setEsMouDreta(i % 2 == 0);
+		monsters[i]->setRadiPErseguir(70);
+	}
+
+	//Creem el boss skull
+	/*skull = new Skull();
+	skull->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+
+	skull->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() -300));
+	skull->setPositionBracD1(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 40, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 40));
+	skull->setPositionBracD2(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 72));
+	skull->setPositionBracE1(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 40, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 40));
+	skull->setPositionBracE2(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 72));
+	skull->setPositionMaD(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 104));
+	skull->setPositionMaE(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 104));
+	
+	skull->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
+
+	skull->setRadiPatrulla(60);
+	skull->setTileMap(map);
+	skull->setEsMouDreta(false);
+	skull->setRadiPErseguir(70);*/
+
+
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1.f), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
 }
@@ -46,6 +80,10 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 	
 	player->update(deltaTime);
+	for (int i = 0; i < numMonsters; i++){
+		monsters[i]->update(deltaTime);
+	}
+	//skull->update(deltaTime);
 }
 
 void Scene::render()
@@ -66,6 +104,10 @@ void Scene::render()
 	renderBackground();
 	map->render();
 	player->render();
+	for (int i = 0; i < numMonsters; i++){
+		monsters[i]->render();
+	}
+	skull->render();
 
 
 }
@@ -142,4 +184,7 @@ void Scene::initBackground(){
 	background.loadFromFile("images/background_1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 }
 
+glm::vec2 Scene::getPlayerPos(){
+	return glm::vec2(player->getX(), player->getY());
+}
 
