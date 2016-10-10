@@ -11,11 +11,19 @@
 
 // Game is a singleton (a class with a single instance) that represents our whole application
 
+#define  GLUT_LEFT_BUTTON                   0x0000
+#define  GLUT_MIDDLE_BUTTON                 0x0001
+#define  GLUT_RIGHT_BUTTON                  0x0002
 
 class Game
 {
-
+	struct Mouse{
+		bool button[5];
+		int x, y;
+	};
 public:
+
+
 	Game() {}
 	
 	
@@ -41,6 +49,10 @@ public:
 	
 	bool getKey(int key) const;
 	bool getSpecialKey(int key) const;
+	void getScreenMousePos(int * x, int * y);
+	void getWorldMousePos(double * x, double * y);
+	bool isMousePressed(int button);
+
 	glm::vec2 getPlayerPos();
 
 private:
@@ -48,7 +60,7 @@ private:
 	Scene scene;                      // Scene to render
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
-
+	Mouse mouse;
 };
 
 
