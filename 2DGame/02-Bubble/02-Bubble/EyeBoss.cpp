@@ -28,7 +28,7 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	delay = 0;
 	patrullar = true;
 	estat = 1;
-	
+	playerXanterior = Game::instance().getPlayerPos().x;
 
 	tileMapDispl = tileMapPos;
 	velocitat = 10;
@@ -39,16 +39,20 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 void EyeBoss::update(int deltaTime)
 {
 	sprite->update(deltaTime);
-	if (patrullar) doPatrullar(deltaTime);
-	float dist = getDistancia(Game::instance().getPlayerPos(), posEyeBoss);
-	if (dist < 100 || !patrullar){
-		if (estat == 1){
-			patrullar = false;
-			doAtack1();
-			//doPatrullarXtime(deltaTime, 60*5);
-		}
+	glm::vec2 playerPos = Game::instance().getPlayerPos();
+	//Moviment per default, patrulla fins que te el player aprop
+	int deltaXPlayer = playerPos.x - playerXanterior;
+	playerXanterior = playerPos.x;
+	if (modo == 0){
+		float dist = getDistancia(playerPos, posEyeBoss);
+		if (dist < 200 || !patrullar) modo++;
+		else doPatrullar(deltaTime);
 	}
-
+	//Ja ha detectat el player, i te mes del X% de la vida
+	else if (modo == 1){
+		doPatrullar(deltaTime, deltaXPlayer);
+		deltaXPlayer = 0;
+	}
 
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posEyeBoss.x), float(tileMapDispl.y + posEyeBoss.y)));
 	
@@ -107,10 +111,11 @@ void EyeBoss::setVelocitat(int vel){
 }
 
 //Volara a una distancia X del player fen moviments sinusoidals dins del radi definit
-void EyeBoss::doPatrullar(int deltaTime){
-	//playerPos = Game::instance().getPlayerPos()
-	posEyeBoss.y = (yInicial + 60*(sin((deltaTime/5)*3.1416/180.f))); 
-	posEyeBoss.x = (xInicial + 150*(sin((deltaTime / 10)*3.1416 / 180.f)));
+void EyeBoss::doPatrullar(int deltaTime, float deltaPlayerX){
+	playerPos = Game::instance().getPlayerPos();
+	xInicial += deltaPlayerX;
+	posEyeBoss.y = (yInicial + 60 * (sin((deltaTime / 5)*3.1416 / 180.f)));
+	posEyeBoss.x = (xInicial + 150 * (sin((deltaTime / 10)*3.1416 / 180.f)));
 }
 
 void EyeBoss::doAtack1(){
@@ -119,7 +124,7 @@ void EyeBoss::doAtack1(){
 			glm::vec2 playerPos = Game::instance().getPlayerPos();
 			direccioAtackX = (playerPos.x - posEyeBoss.x);
 			direccioAtackY = (playerPos.y - posEyeBoss.y);
-			posFinalAtack = glm::vec2(posEyeBoss.x + (2 * direccioAtackX), posEyeBoss.y + (2 * direccioAtackY));
+			posFinalAtack = glm::vec2(posEyeBoss.x + (1.5 * direccioAtackX), posEyeBoss.y + (1.5 * direccioAtackY));
 			float dirModul = sqrt(pow(direccioAtackX, 2) + pow(direccioAtackY, 2));
 			direccio = glm::vec2(direccioAtackX / dirModul, direccioAtackY / dirModul);
 			atackAcavat = false;

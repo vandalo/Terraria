@@ -30,11 +30,12 @@ public:
 	void setRadiPerseguir(int radi);
 	void setInitPosition(glm::vec2 iniPos);
 	void setVelocitat(int vel);
-	void doPatrullar(int deltaTime);
+	void doPatrullar(int deltaTime, float deltaPlayerX = 0);
 	void doAtack1();
 	float getDistancia(glm::vec2 posPlayer, glm::vec2 posEyeBoss);
 
 private:
+	int playerXanterior;
 	int vida;
 	float velocitat;
 	bool atackAcavat, patrullar;
