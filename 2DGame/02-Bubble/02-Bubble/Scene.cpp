@@ -187,8 +187,8 @@ void Scene::renderBackground(){
 void Scene::initBackground(){
 
 	//Aqui definim la geometria i les cordenades de textura
-	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(512.f, 16.f) };
-	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
+	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(1300.f, 480.f) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(2.f, 1.f) };
 
 	//Definim els 24 vertex per pintar la textura 12 per cada triangle
 	float vertices[24] = { 
@@ -209,7 +209,7 @@ void Scene::initBackground(){
 	texCoordLocation = texProgram.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void *)(2 * sizeof(float)));
 
 	//carreguem textura (el background bo es el 23)
-	background.loadFromFile("images/background_1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	background.loadFromFile("images/background_23.png", TEXTURE_PIXEL_FORMAT_RGBA);
 }
 
 glm::vec2 Scene::getPlayerPos(){
