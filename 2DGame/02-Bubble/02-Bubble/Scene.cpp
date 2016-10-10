@@ -98,7 +98,7 @@ void Scene::update(int deltaTime)
 		monsters[i]->update(deltaTime);
 	}
 	//skull->update(deltaTime);
-	eyeBoss->update(currentTime);
+	eyeBoss->update(deltaTime);
 	int sx, sy;
 	double wx, wy;
 	if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {

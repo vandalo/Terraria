@@ -32,7 +32,8 @@ public:
 	void setVelocitat(int vel);
 	void doPatrullar(int deltaTime, float deltaPlayerX = 0);
 	void doAtack1();
-	float getDistancia(glm::vec2 posPlayer, glm::vec2 posEyeBoss);
+	void doRecuperaPoiscio();
+	float getDistanciaEixX(glm::vec2 posPlayer, glm::vec2 posEyeBoss);
 
 private:
 	int playerXanterior;
@@ -44,7 +45,7 @@ private:
 	glm::ivec2 tileMapDispl, posEyeBoss;
 	glm::vec2 playerPos, posFinalAtack, direccio;
 	int startY, startX;
-	int modo, estat, numAtack;
+	int modo, estat, numAtack, numPersecusio, angle;
 	int delay;
 	float deltaPlayer;
 	Texture spritesheet;

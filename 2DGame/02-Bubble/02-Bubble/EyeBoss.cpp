@@ -24,10 +24,12 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.25, 0.25), &spritesheet, &shaderProgram);
 	modo = 0;
 	numAtack = 0;
+	numPersecusio = 0;
 	rotateSprite = 0;
-	delay = 0;
+	delay = 5 * 60;
 	patrullar = true;
 	estat = 1;
+	angle = 0;
 	playerXanterior = Game::instance().getPlayerPos().x;
 
 	tileMapDispl = tileMapPos;
@@ -39,19 +41,26 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 void EyeBoss::update(int deltaTime)
 {
 	sprite->update(deltaTime);
+	angle += deltaTime;
 	glm::vec2 playerPos = Game::instance().getPlayerPos();
 	//Moviment per default, patrulla fins que te el player aprop
 	int deltaXPlayer = playerPos.x - playerXanterior;
 	playerXanterior = playerPos.x;
 	if (modo == 0){
-		float dist = getDistancia(playerPos, posEyeBoss);
-		if (dist < 200 || !patrullar) modo++;
-		else doPatrullar(deltaTime);
+		float dist = getDistanciaEixX(playerPos, posEyeBoss);
+		if (dist < 150 || !patrullar) modo++;
+		else doPatrullar(angle);
 	}
 	//Ja ha detectat el player, i te mes del X% de la vida
 	else if (modo == 1){
-		doPatrullar(deltaTime, deltaXPlayer);
-		deltaXPlayer = 0;
+		xInicial += deltaXPlayer;
+		if (patrullar){
+			doPatrullar(angle);
+			deltaXPlayer = 0;
+		}
+		else if (numAtack < 3)
+			doAtack1();
+		else doRecuperaPoiscio();
 	}
 
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posEyeBoss.x), float(tileMapDispl.y + posEyeBoss.y)));
@@ -112,10 +121,17 @@ void EyeBoss::setVelocitat(int vel){
 
 //Volara a una distancia X del player fen moviments sinusoidals dins del radi definit
 void EyeBoss::doPatrullar(int deltaTime, float deltaPlayerX){
-	playerPos = Game::instance().getPlayerPos();
-	xInicial += deltaPlayerX;
-	posEyeBoss.y = (yInicial + 60 * (sin((deltaTime / 5)*3.1416 / 180.f)));
-	posEyeBoss.x = (xInicial + 150 * (sin((deltaTime / 10)*3.1416 / 180.f)));
+	if (delay == 0){
+		patrullar = false;
+		numAtack = 0;
+	}
+	else{
+		playerPos = Game::instance().getPlayerPos();
+		posEyeBoss.y = (yInicial + 60 * (sin((angle / 5)*3.1416 / 180.f)));
+		posEyeBoss.x = (xInicial + 150 * (sin((angle / 10)*3.1416 / 180.f)));
+		if(modo != 0)delay--;
+		if (delay < 0) delay = 0;
+	}
 }
 
 void EyeBoss::doAtack1(){
@@ -137,8 +153,8 @@ void EyeBoss::doAtack1(){
 			delay = (60 * 1.2);
 		}
 		else{
-			posEyeBoss.x += velocitat * direccio.x;
-			posEyeBoss.y += velocitat * direccio.y;
+			posEyeBoss.x += velocitat * 0.5 * direccio.x;
+			posEyeBoss.y += velocitat * 0.5 * direccio.y;
 		}
 	}
 	else{
@@ -147,8 +163,26 @@ void EyeBoss::doAtack1(){
 	
 }
 
-float EyeBoss::getDistancia(glm::vec2 posPlayer, glm::vec2 posEyeBoss){
+void EyeBoss::doRecuperaPoiscio(){
+	direccioAtackX = (xInicial - posEyeBoss.x);
+	direccioAtackY = (yInicial - posEyeBoss.y);
+	posFinalAtack = glm::vec2(posEyeBoss.x + direccioAtackX, posEyeBoss.y + direccioAtackY);
+	float dirModul = sqrt(pow(direccioAtackX, 2) + pow(direccioAtackY, 2));
+	direccio = glm::vec2(direccioAtackX / dirModul, direccioAtackY / dirModul);
+	if (abs(posEyeBoss.y - posFinalAtack.y) < 10 && abs(posEyeBoss.y - posFinalAtack.y) < 10){
+		patrullar = true;
+		delay = 5 * 60;
+		angle = 0;
+	}
+	else{
+		if (abs(posEyeBoss.x - posFinalAtack.x) > 5)posEyeBoss.x += velocitat * direccio.x;
+		if (abs(posEyeBoss.y - posFinalAtack.y) > 5)posEyeBoss.y += velocitat * direccio.y;
+	}
+}
+
+float EyeBoss::getDistanciaEixX(glm::vec2 posPlayer, glm::vec2 posEyeBoss){
 	return sqrt(pow(posPlayer[0] - posEyeBoss[0], 2) + pow(posPlayer[1] - posEyeBoss[1], 2));
+	//return abs(posPlayer[0] - posEyeBoss[0]);
 }
 
 
