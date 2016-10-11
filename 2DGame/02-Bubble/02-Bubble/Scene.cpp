@@ -33,9 +33,14 @@ void Scene::init()
 {
 	initShaders();
 	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+
 	numMonsters = 2;
+	sizeWorldX = 10000;
+	sizeWorldY = 10000;
 
 	initBackground();
+	initBackground2();
+	initBackground3();
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
@@ -58,41 +63,21 @@ void Scene::init()
 	eyeBoss->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	eyeBoss->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
 	eyeBoss->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
-	
-
 	eyeBoss->setRadiPatrulla(60);
 	eyeBoss->setTileMap(map);
 	eyeBoss->setEsMouDreta(false);
 	eyeBoss->setRadiPerseguir(70);
 
-	//Creem el boss skull
-	/*skull = new Skull();
-	skull->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-
-	skull->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() -300));
-	skull->setPositionBracD1(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 40, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 40));
-	skull->setPositionBracD2(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 72));
-	skull->setPositionBracE1(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 40, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 40));
-	skull->setPositionBracE2(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 72));
-	skull->setPositionMaD(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 104));
-	skull->setPositionMaE(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 104));
-	
-	skull->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
-
-	skull->setRadiPatrulla(60);
-	skull->setTileMap(map);
-	skull->setEsMouDreta(false);
-	skull->setRadiPErseguir(70);*/
-
-
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1.f), float(SCREEN_HEIGHT - 1), 0.f);
+	staticInterface = new StaticInterface();
+	staticInterface->init(texProgram);
 	currentTime = 0.0f;
 }
 
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	
+	staticInterface->update(deltaTime);
 	player->update(deltaTime);
 	for (int i = 0; i < numMonsters; i++){
 		monsters[i]->update(deltaTime);
@@ -112,7 +97,6 @@ void Scene::update(int deltaTime)
 
 void Scene::render()
 {
-	
 
 	glm::mat4 modelview;
 	projection = glm::ortho((float)(player->getX() - (SCREEN_WIDTH/2)), float((SCREEN_WIDTH/2) + player->getX()),
@@ -132,11 +116,14 @@ void Scene::render()
 	for (int i = 0; i < numMonsters; i++){
 		monsters[i]->render();
 	}
-	//skull->render();
 	eyeBoss->render();
 
-	glColor3b(0xFF, 0x00, 0x00);
-	glutSolidCube(1);
+	projection = glm::ortho(0.f, (float)SCREEN_WIDTH,
+		0.f, (float)SCREEN_HEIGHT);
+	texProgram.setUniformMatrix4f("projection", projection);
+	staticInterface->render();
+	//glColor3b(0xFF, 0x00, 0x00);
+	//glutSolidCube(1);
 	
 }
 
@@ -182,13 +169,34 @@ void Scene::renderBackground(){
 	glDisable(GL_TEXTURE_2D);
 
 	//Background2
+	glEnable(GL_TEXTURE_2D);
+	background2.use();
+	glBindVertexArray(vao2);
+	glEnableVertexAttribArray(posLocation2);
+	glEnableVertexAttribArray(texCoordLocation2);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisable(GL_TEXTURE_2D);
+
+	//Background3
+	glEnable(GL_TEXTURE_2D);
+	background3.use();
+	glBindVertexArray(vao3);
+	glEnableVertexAttribArray(posLocation3);
+	glEnableVertexAttribArray(texCoordLocation3);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisable(GL_TEXTURE_2D);
 }
 
 void Scene::initBackground(){
 
+	//carreguem textura (el background bo es el 23)
+	background.loadFromFile("images/background_0.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	background.setWrapT(GL_CLAMP_TO_EDGE);
+	float width = background.width();
+	float heigth = background.height();
 	//Aqui definim la geometria i les cordenades de textura
-	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(1300.f, 480.f) };
-	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(2.f, 1.f) };
+	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 480.f), glm::vec2(sizeWorldX, -sizeWorldY) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(sizeWorldX *2 / width, (480+sizeWorldY)/heigth) };
 
 	//Definim els 24 vertex per pintar la textura 12 per cada triangle
 	float vertices[24] = { 
@@ -208,11 +216,75 @@ void Scene::initBackground(){
 	posLocation = texProgram.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
 	texCoordLocation = texProgram.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void *)(2 * sizeof(float)));
 
+}
+
+void Scene::initBackground2(){
+	background2.loadFromFile("images/background_71.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	float heigth = background2.height();
+	float width = background2.width();
+	//Aqui definim la geometria i les cordenades de textura
+	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 480.f), glm::vec2(sizeWorldX, 960.f) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(sizeWorldX * 2 /width, 480.f/heigth) };
+
+	//Definim els 24 vertex per pintar la textura 12 per cada triangle
+	float vertices[24] = {
+		geom[0].x, geom[0].y, texCoords[0].x, texCoords[0].y,
+		geom[1].x, geom[0].y, texCoords[1].x, texCoords[0].y,
+		geom[1].x, geom[1].y, texCoords[1].x, texCoords[1].y,
+		geom[0].x, geom[0].y, texCoords[0].x, texCoords[0].y,
+		geom[1].x, geom[1].y, texCoords[1].x, texCoords[1].y,
+		geom[0].x, geom[1].y, texCoords[0].x, texCoords[1].y };
+
+	glGenVertexArrays(1, &vao2);
+	glBindVertexArray(vao2);
+	glGenBuffers(1, &vbo2);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo2);
+	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_STATIC_DRAW);
+
+	posLocation2 = texProgram.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
+	texCoordLocation2 = texProgram.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void *)(2 * sizeof(float)));
+
 	//carreguem textura (el background bo es el 23)
-	background.loadFromFile("images/background_23.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	
+}
+
+void Scene::initBackground3(){
+	background3.loadFromFile("images/background_70.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	float heigth = background3.height();
+	float width = background3.width();
+	//Aqui definim la geometria i les cordenades de textura
+	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 480.f), glm::vec2(sizeWorldX, 480.f-16.f) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(sizeWorldX  * 2 / width, 0.f) };
+
+	//Definim els 24 vertex per pintar la textura 12 per cada triangle
+	float vertices[24] = {
+		geom[0].x, geom[0].y, texCoords[0].x, texCoords[0].y,
+		geom[1].x, geom[0].y, texCoords[1].x, texCoords[0].y,
+		geom[1].x, geom[1].y, texCoords[1].x, texCoords[1].y,
+		geom[0].x, geom[0].y, texCoords[0].x, texCoords[0].y,
+		geom[1].x, geom[1].y, texCoords[1].x, texCoords[1].y,
+		geom[0].x, geom[1].y, texCoords[0].x, texCoords[1].y };
+
+	glGenVertexArrays(1, &vao3);
+	glBindVertexArray(vao3);
+	glGenBuffers(1, &vbo3);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo3);
+	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_STATIC_DRAW);
+
+	posLocation3 = texProgram.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
+	texCoordLocation3 = texProgram.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void *)(2 * sizeof(float)));
+
+	//carreguem textura (el background bo es el 23)
+
 }
 
 glm::vec2 Scene::getPlayerPos(){
 	return glm::vec2(player->getX(), player->getY());
 }
 
+int Scene::getPlayerLife(){
+	return player->getLife();
+}
+int Scene::getPlayerMaxLife(){
+	return player->getMaxLife();
+}

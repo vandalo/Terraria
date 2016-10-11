@@ -20,6 +20,8 @@ enum PlayerAnims
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 {
 	bJumping = false;
+	life = 15;
+	maxLife = 15;
 	spritesheet.loadFromFile("images/bub.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.25, 0.25), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(4);
@@ -141,5 +143,10 @@ int Player::getY(){
 	return posPlayer.y;
 }
 
-
+int Player::getLife(){
+	return life;
+}
+int Player::getMaxLife(){
+	return maxLife;
+}
 

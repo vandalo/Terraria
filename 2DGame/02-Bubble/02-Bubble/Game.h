@@ -54,6 +54,8 @@ public:
 	bool isMousePressed(int button);
 
 	glm::vec2 getPlayerPos();
+	int getPlayerLife();
+	int getPlayerMaxLife();
 
 private:
 	bool bPlay;                       // Continue to play game?

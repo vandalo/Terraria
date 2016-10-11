@@ -110,5 +110,12 @@ glm::vec2 Game::getPlayerPos(){
 	return scene.getPlayerPos();
 }
 
+int Game::getPlayerLife(){
+	return scene.getPlayerLife();
+}
+
+int Game::getPlayerMaxLife(){
+	return scene.getPlayerMaxLife();
+}
 
 
