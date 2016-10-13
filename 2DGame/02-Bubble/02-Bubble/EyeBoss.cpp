@@ -150,9 +150,9 @@ void EyeBoss::doAtack1(){
 			glm::vec2 playerPos = Game::instance().getPlayerPos();
 			direccioAtackX = (playerPos.x - posEyeBoss.x);
 			direccioAtackY = (playerPos.y - posEyeBoss.y);
-			posFinalAtack = glm::vec2(posEyeBoss.x + (1.5 * direccioAtackX), posEyeBoss.y + (1.5 * direccioAtackY));
 			float dirModul = sqrt(pow(direccioAtackX, 2) + pow(direccioAtackY, 2));
 			direccio = glm::vec2(direccioAtackX / dirModul, direccioAtackY / dirModul);
+			posFinalAtack = glm::vec2(posEyeBoss.x + (direccioAtackX + 300 * direccio.x), posEyeBoss.y + (direccioAtackY + 300 * direccio.y));
 			atackAcavat = false;
 		}
 		//Moviment
