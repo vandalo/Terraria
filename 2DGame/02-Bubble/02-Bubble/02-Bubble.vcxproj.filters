@@ -48,10 +48,10 @@
     <ClInclude Include="EyeBoss.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Skull.h">
+    <ClInclude Include="StaticInterface.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="StaticInterface.h">
+    <ClInclude Include="DinamicInterface.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -89,10 +89,10 @@
     <ClCompile Include="EyeBoss.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="Skull.cpp">
+    <ClCompile Include="StaticInterface.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="StaticInterface.cpp">
+    <ClCompile Include="DinamicInterface.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
   </ItemGroup>

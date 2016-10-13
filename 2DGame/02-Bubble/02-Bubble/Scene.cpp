@@ -71,6 +71,9 @@ void Scene::init()
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1.f), float(SCREEN_HEIGHT - 1), 0.f);
 	staticInterface = new StaticInterface();
 	staticInterface->init(texProgram);
+	dinamicInterface = new DinamicInterface();
+	dinamicInterface->init(texProgram);
+	showDinamicInterface = false;
 	currentTime = 0.0f;
 }
 
@@ -78,6 +81,7 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	staticInterface->update(deltaTime);
+	dinamicInterface->update(deltaTime);
 	player->update(deltaTime);
 	for (int i = 0; i < numMonsters; i++){
 		monsters[i]->update(deltaTime);
@@ -122,6 +126,7 @@ void Scene::render()
 		0.f, (float)SCREEN_HEIGHT);
 	texProgram.setUniformMatrix4f("projection", projection);
 	staticInterface->render();
+	if (showDinamicInterface)dinamicInterface->render(false);
 	//glColor3b(0xFF, 0x00, 0x00);
 	//glutSolidCube(1);
 	
@@ -192,8 +197,8 @@ void Scene::initBackground(){
 	//carreguem textura (el background bo es el 23)
 	background.loadFromFile("images/background_0.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	background.setWrapT(GL_CLAMP_TO_EDGE);
-	float width = background.width();
-	float heigth = background.height();
+	int width = background.width();
+	int heigth = background.height();
 	//Aqui definim la geometria i les cordenades de textura
 	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 480.f), glm::vec2(sizeWorldX, -sizeWorldY) };
 	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(sizeWorldX *2 / width, (480+sizeWorldY)/heigth) };
@@ -220,8 +225,8 @@ void Scene::initBackground(){
 
 void Scene::initBackground2(){
 	background2.loadFromFile("images/background_71.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	float heigth = background2.height();
-	float width = background2.width();
+	int heigth = background2.height();
+	int width = background2.width();
 	//Aqui definim la geometria i les cordenades de textura
 	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 480.f), glm::vec2(sizeWorldX, 960.f) };
 	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(sizeWorldX * 2 /width, 480.f/heigth) };
@@ -250,8 +255,8 @@ void Scene::initBackground2(){
 
 void Scene::initBackground3(){
 	background3.loadFromFile("images/background_70.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	float heigth = background3.height();
-	float width = background3.width();
+	int heigth = background3.height();
+	int width = background3.width();
 	//Aqui definim la geometria i les cordenades de textura
 	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 480.f), glm::vec2(sizeWorldX, 480.f-16.f) };
 	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(sizeWorldX  * 2 / width, 0.f) };
@@ -287,4 +292,8 @@ int Scene::getPlayerLife(){
 }
 int Scene::getPlayerMaxLife(){
 	return player->getMaxLife();
+}
+
+void Scene::changeModeInterface(){
+	showDinamicInterface = !showDinamicInterface;
 }

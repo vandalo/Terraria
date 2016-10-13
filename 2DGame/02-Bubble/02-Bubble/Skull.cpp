@@ -29,7 +29,7 @@ void Skull::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	maD = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.25, 0.25), &spritesheet, &shaderProgram);
 	maE = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.25, 0.25), &spritesheet, &shaderProgram);
 
-	rotateSprite = M_PI;
+	rotateSprite = (float)M_PI;
 	rotateBracD1 = 0;
 	rotateBracD2 = 0;
 	rotateBracE1 = 0;

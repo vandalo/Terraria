@@ -10,7 +10,7 @@
 #include "Skull.h"
 #include "EyeBoss.h"
 #include "StaticInterface.h"
-
+#include "DinamicInterface.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -29,6 +29,7 @@ public:
 	glm::vec2 getPlayerPos();
 	int getPlayerLife();
 	int getPlayerMaxLife();
+	void changeModeInterface();
 
 private:
 	void initShaders();
@@ -40,6 +41,8 @@ private:
 
 private:
 	StaticInterface *staticInterface;
+	DinamicInterface *dinamicInterface;
+	bool showDinamicInterface;
 	float sizeWorldX, sizeWorldY;
 	TileMap *map;
 	Player *player;

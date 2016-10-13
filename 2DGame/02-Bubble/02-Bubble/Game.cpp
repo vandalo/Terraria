@@ -29,6 +29,8 @@ void Game::keyPressed(int key)
 {
 	if(key == 27) // Escape code
 		bPlay = false;
+	if (key == 'i')
+		scene.changeModeInterface();
 	keys[key] = true;
 }
 
