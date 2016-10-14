@@ -4,25 +4,39 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Game.h"
 
-
 void Game::init()
 {
 	bPlay = true;
 	glClearColor(0.4f, 0.0f, 0.9f, 0.3f);
 	scene.init();
+	mainMenu.init();
+	screen = MAINMENU;
 }
 
 bool Game::update(int deltaTime)
 {
-	scene.update(deltaTime);
-	
+	switch (screen){
+	case MAINMENU:
+		mainMenu.update(deltaTime);
+		break;
+	case GAME:
+		scene.update(deltaTime);
+		break;
+	}
 	return bPlay;
 }
 
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	scene.render();
+	switch (screen){
+		case MAINMENU:
+			mainMenu.render();
+			break;
+		case GAME:
+			scene.render();
+			break;
+	}
 }
 
 void Game::keyPressed(int key)
@@ -120,4 +134,6 @@ int Game::getPlayerMaxLife(){
 	return scene.getPlayerMaxLife();
 }
 
-
+void Game::setModeGame(){
+	screen = GAME;
+}

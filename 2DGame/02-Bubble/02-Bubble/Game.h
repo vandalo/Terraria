@@ -3,6 +3,7 @@
 
 
 #include "Scene.h"
+#include "MainMenu.h"
 
 
 #define SCREEN_WIDTH 640
@@ -52,14 +53,22 @@ public:
 	void getScreenMousePos(int * x, int * y);
 	void getWorldMousePos(double * x, double * y);
 	bool isMousePressed(int button);
+	void setModeGame();
 
 	glm::vec2 getPlayerPos();
 	int getPlayerLife();
 	int getPlayerMaxLife();
 
 private:
+	enum sceneStates
+	{
+		MAINMENU, GAME, CREDITS, HELP
+	};
+
 	bool bPlay;                       // Continue to play game?
+	sceneStates screen;				  //wich screen we mush show
 	Scene scene;                      // Scene to render
+	MainMenu mainMenu;			      // Main menu to render
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
 	Mouse mouse;
