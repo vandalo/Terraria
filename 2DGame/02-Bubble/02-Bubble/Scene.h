@@ -30,6 +30,7 @@ public:
 	int getPlayerLife();
 	int getPlayerMaxLife();
 	void changeModeInterface();
+	int inventaryClick(int x, int y);
 
 private:
 	void initShaders();
@@ -57,6 +58,9 @@ private:
 	float currentTime;
 	glm::mat4 projection;
 	Texture background, background2, background3;
+	int posXobjectsInventary, posYobjectsInventary, posXset, posYset, posXcraftBasic, posYcraftBasic, posXchest, posYchest,
+		posXobjectsNeed, posYobjectsNeed, posXrubish, posYrubish;
+
 
 };
 

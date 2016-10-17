@@ -32,11 +32,11 @@ void DinamicInterface::init(ShaderProgram &shaderProgram)
 	posXobjectsInventary = 16;
 	posYobjectsInventary = SCREEN_HEIGHT - 50;
 	posXset = SCREEN_WIDTH - 50;
-	posYset = 8*35;
+	posYset = 8 * 35;
 	//16 = distancia de marge, 35 distancia de linventari superior, 4 diferencia entre 35-31
 	posXchest = 16 + 35 + 4;
-	posYchest = SCREEN_HEIGHT - 50 - 35*5; 
-	posXcraftBasic = 16+4;
+	posYchest = SCREEN_HEIGHT - 50 - 35 * 5;
+	posXcraftBasic = 16 + 4;
 	posYcraftBasic = SCREEN_HEIGHT / 3 + 24;
 	posXobjectsNeed = 16 + 4 + 35;
 	posYobjectsNeed = SCREEN_HEIGHT / 3 + 24;
@@ -65,7 +65,7 @@ void DinamicInterface::render(bool chest)
 	posYrubish = posYobjectsInventary - ((cont + 1) * 35);
 	//draw set
 	for (int i = 0; i < 8; i++){
-		spriteBackSet->setPosition(glm::vec2(float(posXset), float(posYset - (i*35))));
+		spriteBackSet->setPosition(glm::vec2(float(posXset), float(posYset - (i * 35))));
 		spriteBackSet->render();
 	}
 	cont = -1;
@@ -106,6 +106,3 @@ void DinamicInterface::setTileMap(TileMap *tileMap)
 {
 	map = tileMap;
 }
-
-
-
