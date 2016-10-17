@@ -98,9 +98,9 @@ void MainMenu::initShaders()
 	texProgram.link();
 	if (!texProgram.isLinked())
 	{
-		cout << "Shader Linking Error" << endl;
-		cout << "" << texProgram.log() << endl << endl;
+		cout << "Shader Linking Error" << endl;		cout << "" << texProgram.log() << endl << endl;
 	}
+
 	texProgram.bindFragmentOutput("outColor");
 	vShader.free();
 	fShader.free();
@@ -116,9 +116,9 @@ void MainMenu::renderBackground(){
 	glEnableVertexAttribArray(texCoordLocation);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glDisable(GL_TEXTURE_2D);
-	/*
+	
 	//Background2
-	glEnable(GL_TEXTURE_2D);
+	/*glEnable(GL_TEXTURE_2D);
 	background2.use();
 	glBindVertexArray(vao2);
 	glEnableVertexAttribArray(posLocation2);
@@ -139,7 +139,7 @@ void MainMenu::renderBackground(){
 void MainMenu::initBackground(){
 
 	//carreguem textura (el background bo es el 23)
-	background.loadFromFile("images/backgroundMenu.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	background.loadFromFile("images/backMenu.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	int width = background.width();
 	int heigth = background.height();
 	//Aqui definim la geometria i les cordenades de textura
@@ -167,12 +167,12 @@ void MainMenu::initBackground(){
 }
 
 void MainMenu::initBackground2(){
-	background2.loadFromFile("images/background_23.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	background2.loadFromFile("images/button_singlePlayer.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	int heigth = background2.height();
 	int width = background2.width();
 	//Aqui definim la geometria i les cordenades de textura
-	glm::vec2 geom[2] = { glm::vec2(0.f, 480.f), glm::vec2(640.f, 0.f) };
-	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(0.62f, -0.8f) };
+	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(400.f, 128.f) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(.39f, 0.5f) };
 
 	//Definim els 24 vertex per pintar la textura 12 per cada triangle
 	float vertices[24] = {
@@ -191,9 +191,6 @@ void MainMenu::initBackground2(){
 
 	posLocation2 = texProgram.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
 	texCoordLocation2 = texProgram.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void *)(2 * sizeof(float)));
-
-	//carreguem textura (el background bo es el 23)
-
 }
 
 void MainMenu::initBackground3(){

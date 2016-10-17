@@ -10,7 +10,7 @@ void Game::init()
 	glClearColor(0.4f, 0.0f, 0.9f, 0.3f);
 	scene.init();
 	mainMenu.init();
-	screen = MAINMENU;
+	screen = GAME;
 }
 
 bool Game::update(int deltaTime)

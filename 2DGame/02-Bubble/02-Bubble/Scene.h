@@ -30,6 +30,7 @@ public:
 	int getPlayerLife();
 	int getPlayerMaxLife();
 	void changeModeInterface();
+	int inventaryClick(int x, int y);
 
 private:
 	void initShaders();
@@ -55,10 +56,12 @@ private:
 	GLuint vao, vao2, vao3;
 	GLuint vbo, vbo2, vbo3;
 	float currentTime;
-	glm::mat4 projection;
+	glm::mat4 projection, modelview;
 	Texture background, background2, background3;
-	glm::mat4 modelview;
-	
+
+	int posXobjectsInventary, posYobjectsInventary, posXset, posYset, posXcraftBasic, posYcraftBasic, posXchest, posYchest,
+		posXobjectsNeed, posYobjectsNeed, posXrubish, posYrubish;
+
 
 
 };

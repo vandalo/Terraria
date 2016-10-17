@@ -75,6 +75,19 @@ void Scene::init()
 	staticInterface->init(texProgram);
 	dinamicInterface = new DinamicInterface();
 	dinamicInterface->init(texProgram);
+	//Init de posicions dinventari
+	posXobjectsInventary = 16;
+	posYobjectsInventary = SCREEN_HEIGHT - 50;
+	posXset = SCREEN_WIDTH - 50;
+	posYset = 8 * 35;
+	//16 = distancia de marge, 35 distancia de linventari superior, 4 diferencia entre 35-31
+	posXchest = 16 + 35 + 4;
+	posYchest = SCREEN_HEIGHT - 50 - 35 * 5;
+	posXcraftBasic = 16 + 4;
+	posYcraftBasic = SCREEN_HEIGHT / 3 + 24;
+	posXobjectsNeed = 16 + 4 + 35;
+	posYobjectsNeed = SCREEN_HEIGHT / 3 + 24;
+	//End init
 	showDinamicInterface = false;
 
 	//Creem el boss skull
@@ -123,8 +136,11 @@ void Scene::update(int deltaTime)
 		cout << "World (" << wx << ", " << wy << ")" << endl;
 		cout << endl;
 
-		
 		map->setTile(0, 0, 55, true);
+
+		cout << " ID: ";
+		cout << inventaryClick(sx, sy) << endl;
+
 	}
 }
 
@@ -326,3 +342,62 @@ int Scene::getPlayerMaxLife(){
 void Scene::changeModeInterface(){
 	showDinamicInterface = !showDinamicInterface;
 }
+
+int Scene::inventaryClick(int x, int y){
+	y = SCREEN_HEIGHT - y;
+	//Draw backpack
+	int res = -1;
+	int cont = 0;
+	for (int i = 0; i < 40; i++){
+		if (i % 10 == 0){
+			cont++;
+		}
+		if (x > posXobjectsInventary + ((i % 10) * 35) && x < (posXobjectsInventary + ((i % 10) * 35)) + 32){
+			if (y < (posYobjectsInventary - ((cont - 1) * 35)) && y > posYobjectsInventary - ((cont - 1) * 35) - 32){
+				res = i + 10;
+			}
+		}
+	}
+	//10 Objectes principals
+	if (res == -1){
+		for (int i = 0; i < 10; i++){
+			if (x > posXobjectsInventary + ((i % 10) * 35) && x < (posXobjectsInventary + ((i % 10) * 35)) + 32){
+				if (y < (posYobjectsInventary + (35)) && y > posYobjectsInventary + (35) - 32){
+					res = i;
+				}
+			}
+		}
+	}
+	if (res == -1){
+		if (x > posXobjectsInventary + 315 && x < posXobjectsInventary + 315 + 32){
+			if (y < posYobjectsInventary - (5 * 35 - 32) && y > posYobjectsInventary - (5 * 35)){
+				res = 50;
+			}
+		}
+	}
+	//draw set
+	if (res == -1){
+		if (x > posXset && x < posXset + 32){
+			for (int i = -1; i < 7; i++){
+				if (y < posYset - (i * 35) && y > posYset - (i * 35) - 32){
+					res = i + 52;
+				}
+			}
+		}
+	}
+	cont = -1;
+	//drawCraftingPosibilitys
+	int increment = 31;
+	for (int i = 0; i < 5; i++){
+		if (i == 2){
+			increment += 2;
+			if (x > posXcraftBasic && x < posXcraftBasic + 32){
+				if (y < posYcraftBasic - increment*(i - 1) && y > posYcraftBasic - increment*(i - 1) - 32){
+					res = 59;
+				}
+			}
+		}
+	}
+	return res;
+}
+
