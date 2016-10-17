@@ -84,27 +84,26 @@ void Game::getScreenMousePos(int * x, int * y) {
 	*y = mouse.y;
 }
 
-void Game::getWorldMousePos(double * x, double * y) {
+
+
+void Game::getWorldMousePos(double * x, double * y, glm::mat4 &modelview, glm::mat4 &projectionMatrix) {
 	float mouse_current_z;
 	glReadPixels(mouse.x, mouse.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &mouse_current_z);
-	glm::vec3 windowCoordinates = glm::vec3(mouse.x, mouse.y, mouse_current_z);
-	glm::vec4 viewport = glm::vec4(0.0f, 0.0f, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
+	glm::vec3 windowCoordinates = glm::vec3((double)mouse.x,(double)( SCREEN_HEIGHT - mouse.y), double(mouse_current_z));	
 
-	GLdouble modelviewArray[16]; //var to hold the modelview info
-	GLdouble projectionArray[16]; //var to hold the projection matrix info
+	GLint m_viewport[4];
 
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelviewArray); //get the modelview info
-	glGetDoublev(GL_PROJECTION_MATRIX, projectionArray); //get the projection matrix info
+	glGetIntegerv(GL_VIEWPORT, m_viewport);
 
-	glm::mat4 modelview = glm::make_mat4(modelviewArray);
-	glm::mat4 projection = glm::make_mat4(projectionArray);
+	glm::vec4 viewport = glm::make_vec4( m_viewport);
 
-	glm::vec3 worldCoordinates = glm::unProject(windowCoordinates, modelview, projection, viewport);
+
+	glm::vec3 worldCoordinates = glm::unProject(windowCoordinates, modelview, projectionMatrix, viewport);
 	printf("(%f, %f, %f)\n", worldCoordinates.x, worldCoordinates.y, worldCoordinates.z);
+	
 
 	*x = worldCoordinates.x;
 	*y = worldCoordinates.y;
-	
 
 }
 

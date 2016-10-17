@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "Scene.h"
 #include "Game.h"
 #include <GL/glut.h>
@@ -68,12 +69,36 @@ void Scene::init()
 	eyeBoss->setEsMouDreta(false);
 	eyeBoss->setRadiPerseguir(70);
 
-	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1.f), float(SCREEN_HEIGHT - 1), 0.f);
+
+
 	staticInterface = new StaticInterface();
 	staticInterface->init(texProgram);
 	dinamicInterface = new DinamicInterface();
 	dinamicInterface->init(texProgram);
 	showDinamicInterface = false;
+
+	//Creem el boss skull
+	/*skull = new Skull();
+	skull->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+
+	skull->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() -300));
+	skull->setPositionBracD1(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 40, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 40));
+	skull->setPositionBracD2(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 72));
+	skull->setPositionBracE1(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 40, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 40));
+	skull->setPositionBracE2(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 72));
+	skull->setPositionMaD(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 104));
+	skull->setPositionMaE(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 104));
+	
+	skull->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
+
+	skull->setRadiPatrulla(60);
+	skull->setTileMap(map);
+	skull->setEsMouDreta(false);
+	skull->setRadiPErseguir(70);*/
+
+
+	//projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1.f), float(SCREEN_HEIGHT - 1), 0.f);
+
 	currentTime = 0.0f;
 }
 
@@ -92,21 +117,25 @@ void Scene::update(int deltaTime)
 	double wx, wy;
 	if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
 		Game::instance().getScreenMousePos(&sx, &sy);
+		cout << endl;
 		cout << "Screen (" << sx << ", " << sy << ")" << endl;
-		Game::instance().getWorldMousePos(&wx, &wy);
+		Game::instance().getWorldMousePos(&wx, &wy, modelview , projection);
 		cout << "World (" << wx << ", " << wy << ")" << endl;
 		cout << endl;
+
+		
+		map->setTile(0, 0, 55, true);
 	}
 }
 
 void Scene::render()
 {
 
-	glm::mat4 modelview;
+	
 	projection = glm::ortho((float)(player->getX() - (SCREEN_WIDTH/2)), float((SCREEN_WIDTH/2) + player->getX()),
 		(float)(SCREEN_HEIGHT / 2) + player->getY(), (float)(player->getY() - (SCREEN_HEIGHT / 2)));
-
-
+	
+	
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);

@@ -57,6 +57,9 @@ private:
 	float currentTime;
 	glm::mat4 projection;
 	Texture background, background2, background3;
+	glm::mat4 modelview;
+	
+
 
 };
 

@@ -46,8 +46,8 @@ void MainMenu::update(int deltaTime)
 	if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
 		Game::instance().getScreenMousePos(&sx, &sy);
 		cout << "Screen (" << sx << ", " << sy << ")" << endl;
-		Game::instance().getWorldMousePos(&wx, &wy);
-		cout << "World (" << wx << ", " << wy << ")" << endl;
+		//Game::instance().getWorldMousePos(&wx, &wy, player-> getX(), player -> getY());
+//		cout << "World (" << wx << ", " << wy << ")" << endl;
 		cout << endl;
 		if (sx > 200 && sx < 400 && sy > 200 && sy < 280)
 			Game::instance().setModeGame();
