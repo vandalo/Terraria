@@ -86,15 +86,19 @@ bool TileMap::loadLevel(const string &levelFile)
 		for(int i=0; i<mapSize.x; i++)
 		{
 			fin.get(tile);
-			if(tile == ' ')
-				map[j*mapSize.x+i].id = 0;
-			else
-				map[j*mapSize.x+i].id = tile - int('0');
-
+			if (tile == ' '){
+				map[j*mapSize.x + i].id = 0;
+				//cout << 0 << " ";
+			}
+			else{
+				map[j*mapSize.x + i].id = tile - int('0');
+				//cout << tile - int('0') << " ";
+			}
 			map[j*mapSize.x + i].vertexIndex = -1;
 			map[j*mapSize.x + i].vida = 1;
 
 		}
+		//cout << endl;
 		fin.get(tile);
 #ifndef _WIN32
 		fin.get(tile);
@@ -132,7 +136,6 @@ void TileMap::prepareArrays(const glm::vec2 &minCoords)
 		for(int i=0; i<mapSize.x; i++)
 		{
 			tile = map[j * mapSize.x + i];
-			
 			setTile(tile.id, i, j, false);
 		}
 	}
