@@ -12,6 +12,10 @@ Sprite *Sprite::createSprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInS
 	return quad;
 }
 
+Sprite::Sprite( const Sprite &sprite){
+	//Sprite *res = new Sprite(sprite.vert);
+
+}
 
 Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 {
@@ -110,6 +114,10 @@ int Sprite::animation() const
 void Sprite::setPosition(const glm::vec2 &pos)
 {
 	position = pos;
+}
+
+void Sprite::setTextCord(glm::vec2 pos){
+	texCoordDispl = pos;
 }
 
 

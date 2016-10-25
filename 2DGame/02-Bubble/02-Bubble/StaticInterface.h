@@ -29,7 +29,6 @@ private:
 	Texture spritesheet, spritesheetInventary;
 	Sprite *spriteHeart, *spriteBack10objects;
 	int posXheart, posYheart;
-	int posX10objectsInventary, posY10objectsInventary;
 	
 	TileMap *map;
 

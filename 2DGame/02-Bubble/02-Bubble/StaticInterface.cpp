@@ -3,19 +3,8 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "StaticInterface.h"
+#include "Scene.h"
 #include "Game.h"
-
-
-#define JUMP_ANGLE_STEP 4
-#define JUMP_HEIGHT 96
-#define FALL_STEP 4
-
-
-enum StaticInterfaceAnims
-{
-	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT
-};
-
 
 void StaticInterface::init(ShaderProgram &shaderProgram)
 {
@@ -26,14 +15,6 @@ void StaticInterface::init(ShaderProgram &shaderProgram)
 
 	life = Game::instance().getPlayerLife();
 	maxLife = Game::instance().getPlayerMaxLife();
-	
-
-	//Poiscions de la interficie
-	posXheart = SCREEN_WIDTH - 180;
-	posYheart = SCREEN_HEIGHT - 32;
-	posX10objectsInventary = 16;
-	posY10objectsInventary = SCREEN_HEIGHT - 50;
-
 }
 
 void StaticInterface::update(int deltaTime)

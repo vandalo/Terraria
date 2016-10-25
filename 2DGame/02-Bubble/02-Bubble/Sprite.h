@@ -21,6 +21,7 @@ public:
 	static Sprite *createSprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program);
 
 	Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program);
+	Sprite(const Sprite &sprite);
 
 	void update(int deltaTime);
 	void render(float rotate = 0.f) const;
@@ -33,6 +34,7 @@ public:
 	int animation() const;
 	
 	void setPosition(const glm::vec2 &pos);
+	void setTextCord(glm::vec2 pos);
 
 private:
 	Texture *texture;
@@ -46,6 +48,7 @@ private:
 	glm::vec2 texCoordDispl;
 	vector<AnimKeyframes> animations;
 	glm::vec2 textSize;
+	
 
 };
 

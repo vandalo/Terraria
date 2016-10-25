@@ -14,7 +14,6 @@
 #define INIT_PLAYER_X_TILES 4
 #define INIT_PLAYER_Y_TILES 25
 
-
 Scene::Scene()
 {
 	map = NULL;
@@ -35,18 +34,21 @@ void Scene::init()
 	initShaders();
 	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
-	numMonsters = 2;
+	numMonsters = 0;
 	sizeWorldX = 10000;
 	sizeWorldY = 10000;
-
+	idMovingItem = -1;
+	mouse = false;
 	initBackground();
 	initBackground2();
 	initBackground3();
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-	//player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
-	player->setPosition(glm::vec2(584 * map->getTileSize(), 352 * map->getTileSize()));
+
+	player->setPosition(glm::vec2(584 * map->getTileSize(), 340 * map->getTileSize()));
 	player->setTileMap(map);
+	inventary = new Inventary(texProgram);
+	inventary->setActiveItem(1);
 
 	//monsters sera un array i farem un for
 	for (int i = 0; i < numMonsters; i++){
@@ -63,8 +65,12 @@ void Scene::init()
 	//Creem el boss eye
 	eyeBoss = new EyeBoss();
 	eyeBoss->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-	eyeBoss->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
-	eyeBoss->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
+	//eyeBoss->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
+	eyeBoss->setPosition(glm::vec2(584 * map->getTileSize(), 335 * map->getTileSize()));
+
+	
+	//eyeBoss->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
+	eyeBoss->setInitPosition(glm::vec2(584 * map->getTileSize(), 335 * map->getTileSize()));
 	eyeBoss->setRadiPatrulla(60);
 	eyeBoss->setTileMap(map);
 	eyeBoss->setEsMouDreta(false);
@@ -91,70 +97,68 @@ void Scene::init()
 	//End init
 	showDinamicInterface = false;
 
-	//Creem el boss skull
-	/*skull = new Skull();
-	skull->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-
-	skull->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() -300));
-	skull->setPositionBracD1(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 40, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 40));
-	skull->setPositionBracD2(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 72));
-	skull->setPositionBracE1(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 40, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 40));
-	skull->setPositionBracE2(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 72));
-	skull->setPositionMaD(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 + 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 104));
-	skull->setPositionMaE(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800 - 45, INIT_PLAYER_Y_TILES * map->getTileSize() - 300 + 104));
-	
-	skull->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
-
-	skull->setRadiPatrulla(60);
-	skull->setTileMap(map);
-	skull->setEsMouDreta(false);
-	skull->setRadiPErseguir(70);*/
-
-
 	//projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1.f), float(SCREEN_HEIGHT - 1), 0.f);
-
 	currentTime = 0.0f;
 }
 
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	staticInterface->update(deltaTime);
-	dinamicInterface->update(deltaTime);
+
+	inventary->update();
 	player->update(deltaTime);
 	for (int i = 0; i < numMonsters; i++){
 		monsters[i]->update(deltaTime);
 	}
-	//skull->update(deltaTime);
 	eyeBoss->update(deltaTime);
+	staticInterface->update(deltaTime);
+	dinamicInterface->update(deltaTime);
+	
 	int sx, sy;
 	double wx, wy;
+	Game::instance().getScreenMousePos(&sx, &sy);
+	int idClick = inventaryClick(sx, sy);
 	if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
-		Game::instance().getScreenMousePos(&sx, &sy);
-		cout << endl;
-		cout << "Screen (" << sx << ", " << sy << ")" << endl;
+		//Game::instance().getScreenMousePos(&sx, &sy);
+		//cout << endl;
+		//cout << "Screen (" << sx << ", " << sy << ")" << endl;
 		Game::instance().getWorldMousePos(&wx, &wy, modelview , projection);
-		cout << "World (" << wx << ", " << wy << ")" << endl;
-		cout << endl;
+		//cout << "World (" << wx << ", " << wy << ")" << endl;
+		//cout << endl;
 
 		map->setTile(0, 0, 55, true);
 
-		cout << " ID: ";
-		cout << inventaryClick(sx, sy) << endl;
-
+		//cout << " ID: ";
+		//If(!showDinamicInterface) canviar arma personaje
+		if (!showDinamicInterface){
+			if (idClick >= 0 && idClick < 10)inventary->setActiveItem(idClick);
+		}
+		//Drag and droop
+		else{
+			if(mouse && idMovingItem == -1){
+				if (idClick != -1 && inventary->getId(idClick) != 0){
+					idMovingItem = idClick;
+					mouse = true;
+				}
+			}
+			if (mouse && idMovingItem != -1)inventary->moveItem(idMovingItem, sx - 16, SCREEN_HEIGHT - sy - 16);
+		}
+	}
+	//Just mouseRelease
+	else if (idMovingItem != -1){
+		if (idClick != -1){
+			//inventary->putItem(inventary->getId(idMovingItem), idClick, texProgram);
+			inventary->swapItem(idMovingItem, idClick);
+		}
+		idMovingItem = -1;
 	}
 }
 
 void Scene::render()
 {
-
-	
 	projection = glm::ortho((float)(player->getX() - (SCREEN_WIDTH/2)), float((SCREEN_WIDTH/2) + player->getX()),
 		(float)(SCREEN_HEIGHT / 2) + player->getY(), (float)(player->getY() - (SCREEN_HEIGHT / 2)));
 	
-	/*projection = glm::ortho((float)0, 3000.f,
-		(float)0, 1000.f);*/
-
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -170,14 +174,13 @@ void Scene::render()
 	}
 	eyeBoss->render();
 
+	//Interface
 	projection = glm::ortho(0.f, (float)SCREEN_WIDTH,
 		0.f, (float)SCREEN_HEIGHT);
 	texProgram.setUniformMatrix4f("projection", projection);
 	staticInterface->render();
 	if (showDinamicInterface)dinamicInterface->render(false);
-	//glColor3b(0xFF, 0x00, 0x00);
-	//glutSolidCube(1);
-	
+	inventary->render();	
 }
 
 void Scene::initShaders()
@@ -404,3 +407,14 @@ int Scene::inventaryClick(int x, int y){
 	return res;
 }
 
+void Scene::setPlayerItem(int idCasella){
+	inventary->setActiveItem(idCasella);
+}
+
+void Scene::mouseRealease(){
+	if(showDinamicInterface)mouse = false;
+}
+
+void Scene::mousePress(){
+	if (showDinamicInterface)mouse = true;
+}

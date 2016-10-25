@@ -120,7 +120,7 @@ TileMap::Tile * TileMap::getAtWorldPosition(double x, double y) {
 
 	int x_index = localx / tileSize;
 	int y_index = ( localy) / tileSize;
-	printf("Tile at( %f, %f ) : ( %d , %d )", x, y, x_index, y_index);
+	//printf("Tile at( %f, %f ) : ( %d , %d )", x, y, x_index, y_index);
 	return &map[y_index * mapSize.x + x_index];
 
 }

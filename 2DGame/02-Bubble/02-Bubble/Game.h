@@ -9,7 +9,6 @@
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 600
 
-
 // Game is a singleton (a class with a single instance) that represents our whole application
 
 #define  GLUT_LEFT_BUTTON                   0x0000
@@ -54,6 +53,9 @@ public:
 	void getWorldMousePos(double * x, double * y, glm::mat4 &modelview, glm::mat4 &projection);
 	bool isMousePressed(int button);
 	void setModeGame();
+	void setPlayerItem(int idItem, Sprite* sprite);
+	int getMovingItem(){ return scene.getMovingItem(); };
+	ShaderProgram getShaderProgram(){ return scene.getShaderProgram(); };
 
 	glm::vec2 getPlayerPos();
 	int getPlayerLife();

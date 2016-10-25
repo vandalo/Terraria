@@ -36,8 +36,10 @@ public:
 	
 	void use() const;
 	
+	int getID() const { return texId;  }
 	int width() const { return widthTex; }
 	int height() const { return heightTex; }
+
 
 private:
 	int widthTex, heightTex;

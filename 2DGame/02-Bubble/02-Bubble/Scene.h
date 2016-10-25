@@ -11,13 +11,19 @@
 #include "EyeBoss.h"
 #include "StaticInterface.h"
 #include "DinamicInterface.h"
+#include "Inventary.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
+#define posXheart (SCREEN_WIDTH - 180)
+#define posYheart (SCREEN_HEIGHT - 32)
+#define posX10objectsInventary 16
+#define posY10objectsInventary (SCREEN_HEIGHT - 50)
 
 class Scene
 {
+	Texture spritesheet;
 
 public:
 	Scene();
@@ -31,6 +37,12 @@ public:
 	int getPlayerMaxLife();
 	void changeModeInterface();
 	int inventaryClick(int x, int y);
+	void setPlayerItem(int idCasella);
+	int getMovingItem(){ return idMovingItem; };
+	Player *player;
+	void mousePress();
+	void mouseRealease();
+	ShaderProgram getShaderProgram(){ return texProgram; };
 
 private:
 	void initShaders();
@@ -39,6 +51,8 @@ private:
 	void initBackground();
 	void initBackground2();
 	void initBackground3();
+	
+	
 
 private:
 	StaticInterface *staticInterface;
@@ -46,7 +60,6 @@ private:
 	bool showDinamicInterface;
 	float sizeWorldX, sizeWorldY;
 	TileMap *map;
-	Player *player;
 	Monster *monsters[256];
 	Skull *skull;
 	EyeBoss * eyeBoss;
@@ -58,6 +71,10 @@ private:
 	float currentTime;
 	glm::mat4 projection, modelview;
 	Texture background, background2, background3;
+	Inventary *inventary;
+	int idMovingItem;
+	bool mouse;
+	
 
 	int posXobjectsInventary, posYobjectsInventary, posXset, posYset, posXcraftBasic, posYcraftBasic, posXchest, posYchest,
 		posXobjectsNeed, posYobjectsNeed, posXrubish, posYrubish;

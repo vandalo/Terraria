@@ -24,15 +24,21 @@ public:
 	void setPosition(const glm::vec2 &pos);
 	int getLife();
 	int getMaxLife();
+	void setWeaponSprite(Sprite * weapon);
+	void setActiveItem(int idItem);
 	
 private:
+
+
 	int life, maxLife;
 	bool bJumping;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int jumpAngle, startY;
 	Texture spritesheet;
 	Sprite *sprite;
+	Sprite *weaponSprite;
 	TileMap *map;
+	int activeItem;
 
 };
 

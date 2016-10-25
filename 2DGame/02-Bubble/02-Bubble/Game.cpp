@@ -45,6 +45,26 @@ void Game::keyPressed(int key)
 		bPlay = false;
 	if (key == 'i')
 		scene.changeModeInterface();
+	if (key == '1')
+		scene.setPlayerItem(0);
+	if (key == '2')
+		scene.setPlayerItem(1);
+	if (key == '3')
+		scene.setPlayerItem(2);
+	if (key == '4')
+		scene.setPlayerItem(3);
+	if (key == '5')
+		scene.setPlayerItem(4);
+	if (key == '6')
+		scene.setPlayerItem(5);
+	if (key == '7')
+		scene.setPlayerItem(6);
+	if (key == '8')
+		scene.setPlayerItem(7);
+	if (key == '9')
+		scene.setPlayerItem(8);
+	if (key == '0')
+		scene.setPlayerItem(9);
 	keys[key] = true;
 }
 
@@ -72,11 +92,13 @@ void Game::mouseMove(int x, int y)
 void Game::mousePress(int button)
 {
 	mouse.button[button] = true;
+	scene.mousePress();
 }
 
 void Game::mouseRelease(int button)
 {
 	mouse.button[button] = false;
+	scene.mouseRealease();
 }
 
 void Game::getScreenMousePos(int * x, int * y) {
@@ -99,7 +121,7 @@ void Game::getWorldMousePos(double * x, double * y, glm::mat4 &modelview, glm::m
 
 
 	glm::vec3 worldCoordinates = glm::unProject(windowCoordinates, modelview, projectionMatrix, viewport);
-	printf("(%f, %f, %f)\n", worldCoordinates.x, worldCoordinates.y, worldCoordinates.z);
+	//printf("(%f, %f, %f)\n", worldCoordinates.x, worldCoordinates.y, worldCoordinates.z);
 	
 
 	*x = worldCoordinates.x;
@@ -131,6 +153,11 @@ int Game::getPlayerLife(){
 
 int Game::getPlayerMaxLife(){
 	return scene.getPlayerMaxLife();
+}
+
+void Game::setPlayerItem(int idItem, Sprite * sprite){
+	scene.player->setWeaponSprite(sprite);
+	scene.player->setActiveItem(idItem);
 }
 
 void Game::setModeGame(){
