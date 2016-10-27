@@ -9,6 +9,8 @@ struct Craft{
 	int idItem;
 	Sprite *spriteItem;
 	bool crafteable;
+	bool isObjectCraft;
+	int itemsNeedId[3];
 };
 
 class Crafting
@@ -25,6 +27,8 @@ public:
 	int getIdObejctToCraft();
 	void craftItem(int idItem, ShaderProgram &texProgram);
 	void update();
+	void incrementPointer();
+	void decrementPointer();
 
 private:
 	void setCrafingItems();
@@ -32,4 +36,5 @@ private:
 	Sprite *setSprite(int idItem, ShaderProgram &texProgram);
 	int setPointer(int pointer);
 	int nextPointer(int pointer);
+	void setItemsNeeded(int i);
 };

@@ -12,6 +12,7 @@ Crafting::Crafting(ShaderProgram &texProgram)
 		arrayCraft[i].idItem = i;
 		arrayCraft[i].spriteItem = setSprite(i, texProgram);
 		arrayCraft[i].crafteable = isCrafeable(i);
+		setItemsNeeded(i);
 		if (arrayCraft[i].crafteable) itemPointerCraft = i;
 	}
 }
@@ -19,13 +20,31 @@ Crafting::Crafting(ShaderProgram &texProgram)
 void Crafting::update(){
 	itemPointerCraft = -1;
 	for (int i = 0; i < NUM_ITEMS; i++){
-		arrayCraft[i].crafteable = isCrafeable(i);
+		if (arrayCraft[i].isObjectCraft)
+			arrayCraft[i].crafteable = isCrafeable(i);
 		if (arrayCraft[i].crafteable) itemPointerCraft = i;
 	}
 }
 
 Crafting::~Crafting()
 {
+}
+
+void Crafting::incrementPointer(){
+	itemPointerCraft = nextPointer(itemPointerCraft);
+}
+
+void Crafting::decrementPointer(){
+	int res = itemPointerCraft;
+	int count = 0;
+	for (int i = (itemPointerCraft - 1); i != itemPointerCraft && count != 1; i--){
+		if (i == -1) i = NUM_ITEMS;
+		if (arrayCraft[i].crafteable){
+			count++;
+			res = i;
+		}
+	}
+	itemPointerCraft = res;
 }
 
 void Crafting::render(){
@@ -38,10 +57,10 @@ void Crafting::render(){
 			}
 			// items necesaris per crafetejar
 			if (i == 2){
-				/*for (int i2 = 0; i2 < 3; i2++){
-					spriteBackObjects->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 35), float(posYcraftBasic - 35 * i)));
-					spriteBackObjects->render();
-					}*/
+				for (int i2 = 0; i2 < 3 && arrayCraft[pointer].itemsNeedId[i2] != -1; i2++){
+					arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].spriteItem->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 35), float(posYcraftBasic - 35 * i)));
+					arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].spriteItem->render();
+					}
 			}
 			pointer = nextPointer(pointer);
 		}
@@ -133,4 +152,28 @@ Sprite *Crafting::setSprite(int idSprite, ShaderProgram &texProgram){
 	default:
 		break;
 	}
+}
+
+void Crafting::setItemsNeeded(int i){
+	arrayCraft[i].isObjectCraft = true;
+	switch (i){
+	case PICK:
+		arrayCraft[i].itemsNeedId[0] = WOOD;
+		arrayCraft[i].itemsNeedId[1] = WOOD;
+		arrayCraft[i].itemsNeedId[2] = -1;
+		break;
+	case WOODEN_SWORD:
+		arrayCraft[i].itemsNeedId[0] = WOOD;
+		arrayCraft[i].itemsNeedId[1] = WOOD;
+		arrayCraft[i].itemsNeedId[2] = WOOD;
+		break;
+	default:
+		arrayCraft[i].itemsNeedId[0] = -1;
+		arrayCraft[i].itemsNeedId[1] = -1;
+		arrayCraft[i].itemsNeedId[2] = -1;
+		arrayCraft[i].isObjectCraft = false;
+		break;
+	}
+	
+
 }

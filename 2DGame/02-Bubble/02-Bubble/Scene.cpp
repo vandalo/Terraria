@@ -38,6 +38,7 @@ void Scene::init()
 	sizeWorldX = 10000;
 	sizeWorldY = 10000;
 	idMovingItem = -1;
+	incremented = false;
 	mouse = false;
 	initBackground();
 	initBackground2();
@@ -96,7 +97,17 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 
 	inventary->update();
-	player->update(deltaTime);
+	if (!Game::instance().getSpecialKey(GLUT_KEY_DOWN))incremented = false;
+	if (!Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) pressed = false;
+	if (showDinamicInterface){
+		if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && !incremented){
+			crafting->incrementPointer();
+			incremented = true;
+		}
+	}
+	else{
+		player->update(deltaTime);
+	}
 	for (int i = 0; i < numMonsters; i++){
 		monsters[i]->update(deltaTime);
 	}
@@ -108,7 +119,6 @@ void Scene::update(int deltaTime)
 	double wx, wy;
 	Game::instance().getScreenMousePos(&sx, &sy);
 	int idClick = inventaryClick(sx, sy);
-	if (!Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) pressed = false;
 	if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
 		Game::instance().getWorldMousePos(&wx, &wy, modelview , projection);
 		//If(!showDinamicInterface) canviar arma personaje

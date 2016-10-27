@@ -18,7 +18,7 @@
 #define posXobjectsNeed (16 + 4 + 35)
 #define posYobjectsNeed (SCREEN_HEIGHT / 3 + 24)
 
-#define NUM_ITEMS 3
+#define NUM_ITEMS 4
 
 #define PICK 1
 #define WOODEN_SWORD 2

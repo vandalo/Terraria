@@ -72,7 +72,7 @@ private:
 	Texture background, background2, background3;
 	Inventary *inventary;
 	int idMovingItem;
-	bool mouse, pressed;
+	bool mouse, pressed, incremented;
 	
 
 	int posXrubish, posYrubish;
