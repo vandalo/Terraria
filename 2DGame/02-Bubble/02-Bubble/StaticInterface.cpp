@@ -19,8 +19,6 @@ void StaticInterface::init(ShaderProgram &shaderProgram)
 
 void StaticInterface::update(int deltaTime)
 {
-	//spriteHeart->update(deltaTime);
-	//spriteBack10objects->update(deltaTime);
 	life = Game::instance().getPlayerLife();
 	maxLife = Game::instance().getPlayerMaxLife();
 }

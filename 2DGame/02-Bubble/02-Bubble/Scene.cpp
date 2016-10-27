@@ -82,18 +82,8 @@ void Scene::init()
 	staticInterface->init(texProgram);
 	dinamicInterface = new DinamicInterface();
 	dinamicInterface->init(texProgram);
+	crafting = new Crafting(texProgram);
 	//Init de posicions dinventari
-	posXobjectsInventary = 16;
-	posYobjectsInventary = SCREEN_HEIGHT - 50;
-	posXset = SCREEN_WIDTH - 50;
-	posYset = 8 * 35;
-	//16 = distancia de marge, 35 distancia de linventari superior, 4 diferencia entre 35-31
-	posXchest = 16 + 35 + 4;
-	posYchest = SCREEN_HEIGHT - 50 - 35 * 5;
-	posXcraftBasic = 16 + 4;
-	posYcraftBasic = SCREEN_HEIGHT / 3 + 24;
-	posXobjectsNeed = 16 + 4 + 35;
-	posYobjectsNeed = SCREEN_HEIGHT / 3 + 24;
 	//End init
 	showDinamicInterface = false;
 
@@ -118,25 +108,23 @@ void Scene::update(int deltaTime)
 	double wx, wy;
 	Game::instance().getScreenMousePos(&sx, &sy);
 	int idClick = inventaryClick(sx, sy);
+	if (!Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) pressed = false;
 	if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
-		//Game::instance().getScreenMousePos(&sx, &sy);
-		//cout << endl;
-		//cout << "Screen (" << sx << ", " << sy << ")" << endl;
 		Game::instance().getWorldMousePos(&wx, &wy, modelview , projection);
-		//cout << "World (" << wx << ", " << wy << ")" << endl;
-		//cout << endl;
-
-		map->setTile(0, 0, 55, true);
-
-		//cout << " ID: ";
 		//If(!showDinamicInterface) canviar arma personaje
 		if (!showDinamicInterface){
 			if (idClick >= 0 && idClick < 10)inventary->setActiveItem(idClick);
 		}
+		//Crafting
+		else if (idClick == 59 && !pressed){
+			crafting->craftItem(crafting->getIdObejctToCraft(), texProgram);
+			crafting->update();
+			pressed = true;
+		}
 		//Drag and droop
 		else{
 			if(mouse && idMovingItem == -1){
-				if (idClick != -1 && inventary->getId(idClick) != 0){
+				if (idClick != -1 && idClick  >= 0 && idClick < 50 && inventary->getId(idClick) != 0){
 					idMovingItem = idClick;
 					mouse = true;
 				}
@@ -147,8 +135,11 @@ void Scene::update(int deltaTime)
 	//Just mouseRelease
 	else if (idMovingItem != -1){
 		if (idClick != -1){
-			//inventary->putItem(inventary->getId(idMovingItem), idClick, texProgram);
-			inventary->swapItem(idMovingItem, idClick);
+			if (idClick == 50) {
+				inventary->removeItem(idMovingItem);
+				crafting->update();
+			}
+			else inventary->swapItem(idMovingItem, idClick);
 		}
 		idMovingItem = -1;
 	}
@@ -179,8 +170,11 @@ void Scene::render()
 		0.f, (float)SCREEN_HEIGHT);
 	texProgram.setUniformMatrix4f("projection", projection);
 	staticInterface->render();
-	if (showDinamicInterface)dinamicInterface->render(false);
-	inventary->render();	
+	if (showDinamicInterface){
+		dinamicInterface->render(false);
+		crafting->render();
+	}
+	inventary->render(showDinamicInterface);
 }
 
 void Scene::initShaders()

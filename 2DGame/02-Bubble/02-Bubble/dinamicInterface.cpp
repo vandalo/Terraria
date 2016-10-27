@@ -29,17 +29,8 @@ void DinamicInterface::init(ShaderProgram &shaderProgram)
 	rubish = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(1., 1.), &spritesheetInventary, &shaderProgram);
 
 	//Poiscions de la interficie
-	posXobjectsInventary = 16;
-	posYobjectsInventary = SCREEN_HEIGHT - 50;
-	posXset = SCREEN_WIDTH - 50;
-	posYset = 8 * 35;
+
 	//16 = distancia de marge, 35 distancia de linventari superior, 4 diferencia entre 35-31
-	posXchest = 16 + 35 + 4;
-	posYchest = SCREEN_HEIGHT - 50 - 35 * 5;
-	posXcraftBasic = 16 + 4;
-	posYcraftBasic = SCREEN_HEIGHT / 3 + 24;
-	posXobjectsNeed = 16 + 4 + 35;
-	posYobjectsNeed = SCREEN_HEIGHT / 3 + 24;
 	posXrubish;
 	posYrubish;
 }
@@ -81,22 +72,15 @@ void DinamicInterface::render(bool chest)
 		posYrubish = posYchest - cont * 31 - 34;
 	}
 	//drawCraftingPosibilitys
-	int increment = 31;
 	for (int i = 0; i < 5; i++){
-		spriteBackChest->setPosition(glm::vec2(float(posXcraftBasic), float(posYcraftBasic - increment*i)));
+		spriteObjectCraft->setPosition(glm::vec2(float(posXcraftBasic), float(posYcraftBasic - 35 * i)));
 		if (i == 2){
-			increment += 2;
-			spriteObjectCraft->setPosition(glm::vec2(float(posXcraftBasic), float(posYcraftBasic - increment*i)));
-			spriteObjectCraft->render();
-			//drawCraftingRequiredItems
 			for (int i2 = 0; i2 < 3; i2++){
-				spriteBackChest->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 31), float(posYcraftBasic - increment*i)));
-				spriteBackChest->render();
+				spriteBackObjects->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 35), float(posYcraftBasic - 35 * i)));
+				spriteBackObjects->render();
 			}
 		}
-		else{
-			spriteBackChest->render();
-		}
+		spriteObjectCraft->render();
 	}
 	rubish->setPosition(glm::vec2(float(posXrubish), float(posYrubish)));
 	rubish->render();

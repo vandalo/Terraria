@@ -12,14 +12,11 @@
 #include "StaticInterface.h"
 #include "DinamicInterface.h"
 #include "Inventary.h"
+#include "Crafting.h"
+#include "Define.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
-
-#define posXheart (SCREEN_WIDTH - 180)
-#define posYheart (SCREEN_HEIGHT - 32)
-#define posX10objectsInventary 16
-#define posY10objectsInventary (SCREEN_HEIGHT - 50)
 
 class Scene
 {
@@ -43,6 +40,7 @@ public:
 	void mousePress();
 	void mouseRealease();
 	ShaderProgram getShaderProgram(){ return texProgram; };
+	Inventary* getInventary(){ return inventary; };
 
 private:
 	void initShaders();
@@ -57,6 +55,7 @@ private:
 private:
 	StaticInterface *staticInterface;
 	DinamicInterface *dinamicInterface;
+	Crafting *crafting;
 	bool showDinamicInterface;
 	float sizeWorldX, sizeWorldY;
 	TileMap *map;
@@ -73,11 +72,10 @@ private:
 	Texture background, background2, background3;
 	Inventary *inventary;
 	int idMovingItem;
-	bool mouse;
+	bool mouse, pressed;
 	
 
-	int posXobjectsInventary, posYobjectsInventary, posXset, posYset, posXcraftBasic, posYcraftBasic, posXchest, posYchest,
-		posXobjectsNeed, posYobjectsNeed, posXrubish, posYrubish;
+	int posXrubish, posYrubish;
 
 
 

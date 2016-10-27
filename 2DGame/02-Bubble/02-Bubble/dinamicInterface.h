@@ -27,8 +27,7 @@ private:
 	glm::ivec2 posdinamicInterface;
 	Texture spritesheetInventary, spritesheetInventarySmall;
 	Sprite *spriteBackObjects, *spriteBackSet, *spritePossibleCraft, *spriteObjectCraft, *spriteBackChest, *rubish;
-	int posXobjectsInventary, posYobjectsInventary, posXset, posYset, posXcraftBasic, posYcraftBasic, posXchest, posYchest,
-		posXobjectsNeed, posYobjectsNeed, posXrubish, posYrubish;
+	int posXrubish, posYrubish;
 
 
 	TileMap *map;

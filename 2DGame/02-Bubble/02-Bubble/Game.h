@@ -56,6 +56,8 @@ public:
 	void setPlayerItem(int idItem, Sprite* sprite);
 	int getMovingItem(){ return scene.getMovingItem(); };
 	ShaderProgram getShaderProgram(){ return scene.getShaderProgram(); };
+	bool hasObject(int idItem, int times);
+	Scene* getScene(){ return &scene; };
 
 	glm::vec2 getPlayerPos();
 	int getPlayerLife();

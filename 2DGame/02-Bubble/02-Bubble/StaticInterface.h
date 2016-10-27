@@ -4,6 +4,7 @@
 
 #include "Sprite.h"
 #include "TileMap.h"
+#include "Define.h"
 
 
 // StaticInterface is basically a Sprite that represents the StaticInterface. As such it has
@@ -28,7 +29,6 @@ private:
 	int life, maxLife;
 	Texture spritesheet, spritesheetInventary;
 	Sprite *spriteHeart, *spriteBack10objects;
-	int posXheart, posYheart;
 	
 	TileMap *map;
 
