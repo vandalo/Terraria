@@ -1,4 +1,5 @@
-#define SIZE_INVENTARY 50
+#define SIZE_INVENTARY 58
+#define SIZE_SET 8
 #define SPRITESHEETWIDTH 512
 
 

@@ -28,7 +28,7 @@ private:
 	glm::ivec2 posStaticInterface;
 	int life, maxLife;
 	Texture spritesheet, spritesheetInventary;
-	Sprite *spriteHeart, *spriteBack10objects;
+	Sprite *spriteHeart, *spriteBack10objects, *spriteActiveObject;
 	
 	TileMap *map;
 

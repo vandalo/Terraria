@@ -20,29 +20,33 @@ enum PlayerAnims
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 {
 	bJumping = false;
+	atacking = false;
+	atack = 1;
 	life = 15;
 	maxLife = 15;
 	weaponSprite = NULL;
-	activeItem = -1;
-	spritesheet.loadFromFile("images/bub.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.25, 0.25), &spritesheet, &shaderProgram);
+	activeItem = 1;
+	angleWeapon = -2.5;
+	spritesheet.loadFromFile("images/pj.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.5, 0.045), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(4);
 	
 		sprite->setAnimationSpeed(STAND_LEFT, 8);
 		sprite->addKeyframe(STAND_LEFT, glm::vec2(0.f, 0.f));
 		
 		sprite->setAnimationSpeed(STAND_RIGHT, 8);
-		sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.25f, 0.f));
+		sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.5f, 0.f));
 		
-		sprite->setAnimationSpeed(MOVE_LEFT, 8);
+		sprite->setAnimationSpeed(MOVE_LEFT, 12);
 		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.f));
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.25f));
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.5f));
+		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.045f));
+		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.09f));
+
+		sprite->setAnimationSpeed(MOVE_RIGHT, 12);
+		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.5f, 0.f));
+		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.5f, 0.045f));
+		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.5f, 0.09f));
 		
-		sprite->setAnimationSpeed(MOVE_RIGHT, 8);
-		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25, 0.f));
-		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25, 0.25f));
-		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25, 0.5f));
 		
 	sprite->changeAnimation(0);
 	tileMapDispl = tileMapPos;
@@ -130,8 +134,16 @@ void Player::render()
 {
 	sprite->render();
 	if (weaponSprite != NULL){
-		weaponSprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x - 16), float(tileMapDispl.y + posPlayer.y + 16)));
-		weaponSprite->render(-2.5);
+		
+		if (sprite->animation() == STAND_RIGHT || sprite->animation() == MOVE_RIGHT){
+			weaponSprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x + 16), float(tileMapDispl.y + posPlayer.y + 8)));
+			weaponSprite->render(angleWeapon + 3.1416, 0.);
+
+		}
+		else{
+			weaponSprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x - 16), float(tileMapDispl.y + posPlayer.y + 8)));
+			weaponSprite->render(angleWeapon,0.);
+		}
 	}
 }
 
@@ -165,4 +177,42 @@ void Player::setActiveItem(int idItem){
 	activeItem = idItem;
 }
 
+void Player::upgareAngleWeapon(){
+	angleWeapon += 0.3;
+	if (angleWeapon > -1.5) angleWeapon = -3.;
+}
 
+void Player::setAngleWeapon(){
+	angleWeapon = -2.4;
+}
+
+void Player::setAtacking(){
+	atacking = true;
+}
+
+void Player::unsetAtacking(){
+	atacking = false;
+}
+
+glm::vec2 Player::getBoundingBoxMin(){
+	glm::vec2 mins = glm::vec2(posPlayer.x - 16, posPlayer.y - 16);
+	return mins;
+}
+
+glm::vec2 Player::getBoundingBoxMax(){
+	glm::vec2 maxs = glm::vec2(posPlayer.x + 16, posPlayer.y + 16);
+	return maxs;
+}
+
+void Player::updateLife(int diff){
+	life += diff;
+}
+
+void Player::updatePlayerSet(){
+	//Check inventary set position (50-58)
+	for (int i = 50; i < 58; i++){
+		if (Game::instance().getScene()->getInventary()->getId(i) != 0){
+			//TODO: 
+		}
+	}
+}

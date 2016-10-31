@@ -35,6 +35,7 @@ public:
 private:
 	void render10objects();
 	void renderRestobjects();
+	void renderSet();
 	Item setItem(int idSprite, ShaderProgram &texProgram);
 };
 

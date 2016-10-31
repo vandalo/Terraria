@@ -11,11 +11,11 @@ Inventary::Inventary(ShaderProgram &texProgram)
 	spriteSheetItems.loadFromFile("images/items.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	hasChange = false;
 	//TESTING
-	//putItem(PICK, 0, texProgram);
+	putItem(PICK, 0, texProgram);
 	//putItem(PICK, 1, texProgram);
 	//putItem(WOODEN_SWORD, 1, texProgram);
 	putItem(WOOD, 1, texProgram);
-	putItem(WOOD, 0, texProgram);
+	//putItem(WOOD, 0, texProgram);
 	putItem(WOOD, 2, texProgram);
 	putItem(WOOD, 4, texProgram);
 	putItem(WOOD, 3, texProgram);
@@ -49,9 +49,9 @@ void Inventary::render10objects(){
 	for (int i = 0; i < 10; i++){
 		if (arrayInventary[i].id != 0 && idMovingItem != i){
 			arrayInventary[i].spriteItem->setPosition(glm::vec2(float(posX10objectsInventary + ((i % 10) * 35)), float(posY10objectsInventary)));
-			arrayInventary[i].spriteItem->render();
+			arrayInventary[i].spriteItem->render(3.1416/2);
 		}
-		else if (idMovingItem == i) arrayInventary[i].spriteItem->render();
+		else if (idMovingItem == i) arrayInventary[i].spriteItem->render(3.1416/2);
 	}
 }
 
@@ -65,11 +65,17 @@ void Inventary::renderRestobjects(){
 		}
 		if (arrayInventary[i].id != 0 && idMovingItem != i){
 			arrayInventary[i].spriteItem->setPosition(glm::vec2(float(posXobjectsInventary + ((i % 10) * 35)), float(posYobjectsInventary - (cont * 35))));
-			arrayInventary[i].spriteItem->render();
+			arrayInventary[i].spriteItem->render(3.1416 / 2);
 		}
-		else if (idMovingItem == i) arrayInventary[i].spriteItem->render();
+		else if (idMovingItem == i) arrayInventary[i].spriteItem->render(3.1416 / 2);
 	}
-
+	for (int i = 50; i < 58; i++){
+		if (arrayInventary[i].id != 0 && idMovingItem != i){
+			arrayInventary[i].spriteItem->setPosition(glm::vec2(float(posXset), float(posYset - ((i-50) * 35))));
+			arrayInventary[i].spriteItem->render(3.1416 / 2);
+		}
+		else if (idMovingItem == i) arrayInventary[i].spriteItem->render(3.1416 / 2);
+	}
 }
 
 void Inventary::moveItem(int idItem, int x, int y){

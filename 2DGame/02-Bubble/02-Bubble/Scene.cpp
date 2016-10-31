@@ -33,10 +33,10 @@ void Scene::init()
 {
 	initShaders();
 	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-
-	numMonsters = 0;
-	sizeWorldX = 10000;
-	sizeWorldY = 10000;
+	
+	numMonsters = 20;
+	sizeWorldX = 50000;
+	sizeWorldY = 50000;
 	idMovingItem = -1;
 	incremented = false;
 	mouse = false;
@@ -46,27 +46,23 @@ void Scene::init()
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 
-	player->setPosition(glm::vec2(584 * map->getTileSize(), 340 * map->getTileSize()));
+	player->setPosition(glm::vec2(678 * map->getTileSize(), 204 * map->getTileSize()));
 	player->setTileMap(map);
 	inventary = new Inventary(texProgram);
 	inventary->setActiveItem(1);
+	if (Game::instance().getFood() > 5){
+		inventary->putItem(WOODEN_SWORD, 9, texProgram);
+	}
 
-	//monsters sera un array i farem un for
 	for (int i = 0; i < numMonsters; i++){
 		monsters[i] = new Monster();
 		monsters[i]->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-		monsters[i]->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 300 * (i+1), INIT_PLAYER_Y_TILES * map->getTileSize()));
-		monsters[i]->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 300 * (i+1), INIT_PLAYER_Y_TILES * map->getTileSize()));
-		monsters[i]->setRadiPatrulla(60);
-		monsters[i]->setTileMap(map);
-		monsters[i]->setEsMouDreta(i % 2 == 0);
-		monsters[i]->setRadiPErseguir(70);
 	}
+	initMosntersPosition();
 
 	//Creem el boss eye
 	eyeBoss = new EyeBoss();
 	eyeBoss->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-	//eyeBoss->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
 	eyeBoss->setPosition(glm::vec2(584 * map->getTileSize(), 335 * map->getTileSize()));
 
 	
@@ -84,8 +80,7 @@ void Scene::init()
 	dinamicInterface = new DinamicInterface();
 	dinamicInterface->init(texProgram);
 	crafting = new Crafting(texProgram);
-	//Init de posicions dinventari
-	//End init
+
 	showDinamicInterface = false;
 
 	//projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1.f), float(SCREEN_HEIGHT - 1), 0.f);
@@ -109,7 +104,7 @@ void Scene::update(int deltaTime)
 		player->update(deltaTime);
 	}
 	for (int i = 0; i < numMonsters; i++){
-		monsters[i]->update(deltaTime);
+			monsters[i]->update(deltaTime);
 	}
 	eyeBoss->update(deltaTime);
 	staticInterface->update(deltaTime);
@@ -123,21 +118,30 @@ void Scene::update(int deltaTime)
 		Game::instance().getWorldMousePos(&wx, &wy, modelview , projection);
 		//If(!showDinamicInterface) canviar arma personaje
 		if (!showDinamicInterface){
-			if (idClick >= 0 && idClick < 10)inventary->setActiveItem(idClick);
+			if (idClick >= 0 && idClick < 10){
+				inventary->setActiveItem(idClick);
+				activeItem = idClick;
+			}
+			else{
+				player->setAtacking();
+				player->upgareAngleWeapon();
+			}
 		}
 		//Crafting
 		else if (idClick == 59 && !pressed){
 			crafting->craftItem(crafting->getIdObejctToCraft(), texProgram);
 			crafting->update();
 			pressed = true;
+			setPlayerItem(getActiveItem());
 		}
 		//Drag and droop
 		else{
 			if(mouse && idMovingItem == -1){
-				if (idClick != -1 && idClick  >= 0 && idClick < 50 && inventary->getId(idClick) != 0){
+				if (idClick != -1 && idClick  >= 0 && idClick < 58 && inventary->getId(idClick) != 0){
 					idMovingItem = idClick;
 					mouse = true;
 				}
+				
 			}
 			if (mouse && idMovingItem != -1)inventary->moveItem(idMovingItem, sx - 16, SCREEN_HEIGHT - sy - 16);
 		}
@@ -145,13 +149,19 @@ void Scene::update(int deltaTime)
 	//Just mouseRelease
 	else if (idMovingItem != -1){
 		if (idClick != -1){
-			if (idClick == 50) {
+			if (idClick == 58) {
 				inventary->removeItem(idMovingItem);
 				crafting->update();
 			}
 			else inventary->swapItem(idMovingItem, idClick);
+			if (idClick < 58 && idClick >= 50) player->updatePlayerSet();
+			setPlayerItem(getActiveItem());
 		}
 		idMovingItem = -1;
+	}
+	else{
+		player->unsetAtacking();
+		player->setAngleWeapon();
 	}
 }
 
@@ -255,8 +265,8 @@ void Scene::initBackground(){
 	int width = background.width();
 	int heigth = background.height();
 	//Aqui definim la geometria i les cordenades de textura
-	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 480.f), glm::vec2(sizeWorldX, -sizeWorldY) };
-	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(sizeWorldX *2 / width, (480+sizeWorldY)/heigth) };
+	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 360.f), glm::vec2(sizeWorldX, -sizeWorldY) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(sizeWorldX *2 / width, (360+sizeWorldY)/heigth) };
 
 	//Definim els 24 vertex per pintar la textura 12 per cada triangle
 	float vertices[24] = { 
@@ -283,8 +293,8 @@ void Scene::initBackground2(){
 	int heigth = background2.height();
 	int width = background2.width();
 	//Aqui definim la geometria i les cordenades de textura
-	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 480.f), glm::vec2(sizeWorldX, 960.f) };
-	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(sizeWorldX * 2 /width, 480.f/heigth) };
+	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, -500.f), glm::vec2(sizeWorldX, -sizeWorldY) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(sizeWorldX * 2 /width, 50.f/heigth) };
 
 	//Definim els 24 vertex per pintar la textura 12 per cada triangle
 	float vertices[24] = {
@@ -379,9 +389,10 @@ int Scene::inventaryClick(int x, int y){
 		}
 	}
 	if (res == -1){
+		//rubish
 		if (x > posXobjectsInventary + 315 && x < posXobjectsInventary + 315 + 32){
 			if (y < posYobjectsInventary - (5 * 35 - 32) && y > posYobjectsInventary - (5 * 35)){
-				res = 50;
+				res = 58;
 			}
 		}
 	}
@@ -390,7 +401,7 @@ int Scene::inventaryClick(int x, int y){
 		if (x > posXset && x < posXset + 32){
 			for (int i = -1; i < 7; i++){
 				if (y < posYset - (i * 35) && y > posYset - (i * 35) - 32){
-					res = i + 52;
+					res = i + 51;
 				}
 			}
 		}
@@ -412,6 +423,7 @@ int Scene::inventaryClick(int x, int y){
 }
 
 void Scene::setPlayerItem(int idCasella){
+	activeItem = idCasella;
 	inventary->setActiveItem(idCasella);
 }
 
@@ -421,4 +433,116 @@ void Scene::mouseRealease(){
 
 void Scene::mousePress(){
 	if (showDinamicInterface)mouse = true;
+}
+
+void Scene::initMosntersPosition(){
+	for (int i = 0; i < numMonsters; i++){
+		monsters[i]->setTileMap(map);
+		monsters[i]->setEsMouDreta(i % 2 == 0);
+		monsters[i]->setRadiPErseguir(200);
+		monsters[i]->setRadiPatrulla(200);
+		switch (i){
+			//TODO CANVIAR EL 0
+		case 0:
+			monsters[i]->setPosition(glm::vec2(77 * map->getTileSize(), 332 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(77 * map->getTileSize(), 332 * map->getTileSize()));
+			break;
+		case 1:
+			monsters[i]->setPosition(glm::vec2(77 * map->getTileSize(), 332 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(77 * map->getTileSize(), 332 * map->getTileSize()));
+			break;
+		case 2:
+			monsters[i]->setPosition(glm::vec2(106 * map->getTileSize(), 331 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(106 * map->getTileSize(), 331 * map->getTileSize()));
+			break;
+		case 3:
+			monsters[i]->setPosition(glm::vec2(145 * map->getTileSize(), 321 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(145 * map->getTileSize(), 321 * map->getTileSize()));
+			break;
+		case 4:
+			monsters[i]->setPosition(glm::vec2(217 * map->getTileSize(), 346 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(217 * map->getTileSize(), 346 * map->getTileSize()));
+			break;
+		case 5:
+			monsters[i]->setPosition(glm::vec2(266 * map->getTileSize(), 353 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(266 * map->getTileSize(), 353 * map->getTileSize()));
+			break;
+		case 6:
+			monsters[i]->setPosition(glm::vec2(309 * map->getTileSize(), 365 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(309 * map->getTileSize(), 365 * map->getTileSize()));
+			break;
+		case 7:
+			monsters[i]->setPosition(glm::vec2(127 * map->getTileSize(), 371 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(127 * map->getTileSize(), 371 * map->getTileSize()));
+			break;
+		case 8:
+			monsters[i]->setPosition(glm::vec2(146 * map->getTileSize(), 373 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(146 * map->getTileSize(), 373 * map->getTileSize()));
+			break;
+		case 9:
+			monsters[i]->setPosition(glm::vec2(185 * map->getTileSize(), 378 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(185 * map->getTileSize(), 378 * map->getTileSize()));
+		case 10:
+			monsters[i]->setPosition(glm::vec2(210 * map->getTileSize(), 379 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(210 * map->getTileSize(), 379 * map->getTileSize()));
+			//Dreta
+		case 11:
+			monsters[i]->setPosition(glm::vec2(716 * map->getTileSize(), 307 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(716 * map->getTileSize(), 307 * map->getTileSize()));
+			break;
+		case 12:
+			monsters[i]->setPosition(glm::vec2(703 * map->getTileSize(), 308 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(703 * map->getTileSize(), 308 * map->getTileSize()));
+			break;
+		case 13:
+			monsters[i]->setPosition(glm::vec2(729 * map->getTileSize(), 255 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(729 * map->getTileSize(), 255 * map->getTileSize()));
+			break;
+		case 14:
+			monsters[i]->setPosition(glm::vec2(735 * map->getTileSize(), 256 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(735 * map->getTileSize(), 256 * map->getTileSize()));
+			break;
+		case 15:
+			monsters[i]->setPosition(glm::vec2(732 * map->getTileSize(), 199 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(732 * map->getTileSize(), 199 * map->getTileSize()));
+			break;
+		case 16:
+			monsters[i]->setPosition(glm::vec2(772 * map->getTileSize(), 290 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(772 * map->getTileSize(), 290 * map->getTileSize()));
+			break; 
+		case 17:
+			monsters[i]->setPosition(glm::vec2(798 * map->getTileSize(), 292 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(798 * map->getTileSize(), 292 * map->getTileSize()));
+			break;
+		case 18:
+			monsters[i]->setPosition(glm::vec2(816 * map->getTileSize(), 299 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(816 * map->getTileSize(), 299 * map->getTileSize()));
+			break;
+		case 19:
+			monsters[i]->setPosition(glm::vec2(835 * map->getTileSize(), 338 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(835 * map->getTileSize(), 338 * map->getTileSize()));
+			break;
+		case 20:
+			monsters[i]->setPosition(glm::vec2(795 * map->getTileSize(), 342 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(795 * map->getTileSize(), 342 * map->getTileSize()));
+			break;
+		case 21:
+			monsters[i]->setPosition(glm::vec2(678 * map->getTileSize(), 371 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(678 * map->getTileSize(), 371 * map->getTileSize()));
+			break;
+		case 22:
+			monsters[i]->setPosition(glm::vec2(696 * map->getTileSize(), 374 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(696 * map->getTileSize(), 374 * map->getTileSize()));
+			break;
+		case 23:
+			monsters[i]->setPosition(glm::vec2(712 * map->getTileSize(), 372 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(712 * map->getTileSize(), 372 * map->getTileSize()));
+			break;
+		default:
+			break;
+		}
+		
+		
+
+	}
 }

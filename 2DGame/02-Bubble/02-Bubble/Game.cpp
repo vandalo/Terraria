@@ -8,9 +8,11 @@ void Game::init()
 {
 	bPlay = true;
 	glClearColor(0.4f, 0.0f, 0.9f, 0.3f);
-	scene.init();
+	
 	mainMenu.init();
-	screen = GAME;
+	snake.init();
+	screen = MAINMENU;
+	//screen = GAME;
 }
 
 bool Game::update(int deltaTime)
@@ -21,6 +23,9 @@ bool Game::update(int deltaTime)
 		break;
 	case GAME:
 		scene.update(deltaTime);
+		break;
+	case SNAKE:
+		snake.update(deltaTime);
 		break;
 	}
 	return bPlay;
@@ -36,6 +41,8 @@ void Game::render()
 		case GAME:
 			scene.render();
 			break;
+		case SNAKE:
+			snake.render();
 	}
 }
 
@@ -43,7 +50,7 @@ void Game::keyPressed(int key)
 {
 	if(key == 27) // Escape code
 		bPlay = false;
-	if (key == 'i')
+	if (key == 'i' || key == 'I')
 		scene.changeModeInterface();
 	if (key == '1')
 		scene.setPlayerItem(0);
@@ -161,5 +168,10 @@ void Game::setPlayerItem(int idItem, Sprite * sprite){
 }
 
 void Game::setModeGame(){
+	scene.init();
 	screen = GAME;
+}
+
+void Game::setModeSnake(){
+	screen = SNAKE;
 }

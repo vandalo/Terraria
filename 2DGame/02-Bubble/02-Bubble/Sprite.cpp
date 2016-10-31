@@ -53,13 +53,13 @@ void Sprite::update(int deltaTime)
 	}
 }
 
-void Sprite::render(float rotate) const
+void Sprite::render(float rotate, float dist) const
 {
 	glm::mat4 modelview = glm::mat4(1.0f);
 
-	modelview = glm::translate(modelview, glm::vec3(position.x + (textSize.x / 2), position.y + (textSize.y / 2), 0.f));
+	modelview = glm::translate(modelview, glm::vec3(position.x + (textSize.x / 2) - dist, position.y + (textSize.y / 2), 0.f));
 	modelview = glm::rotate(modelview, rotate, glm::vec3(0, 0, 1));
-	modelview = glm::translate(modelview, glm::vec3(-(textSize.x / 2), -(textSize.y / 2), 0.f));
+	modelview = glm::translate(modelview, glm::vec3(-(textSize.x / 2) + dist, -(textSize.y / 2), 0.f));
 
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);

@@ -34,9 +34,17 @@ public:
 	void doPerseguir();
 	void doPerseguirWithJump();
 	float getDistancia(glm::vec2 posPlayer, glm::vec2 posMonster);
+	void colisionPlayer();
+	glm::vec2 getBoundingBoxMin();
+	glm::vec2 getBoundingBoxMax();
+	bool colision();
+	bool colisionWeapon();
+	int getVida(){ return vida; };
+	int deathTime, maxLife;
 
 private:
-	int vida;
+	
+	int vida, atack, id;
 	float velocitat;
 	int radiPatrulla, radiPerseguir;
 	//El boolean progres es per quan fagi una colisio intenti saltar un cop, 

@@ -40,6 +40,7 @@ public:
 	void mousePress();
 	void mouseRealease();
 	ShaderProgram getShaderProgram(){ return texProgram; };
+	int getActiveItem(){ return activeItem; };
 	Inventary* getInventary(){ return inventary; };
 
 private:
@@ -73,6 +74,8 @@ private:
 	Inventary *inventary;
 	int idMovingItem;
 	bool mouse, pressed, incremented;
+	int activeItem;
+	void initMosntersPosition();
 	
 
 	int posXrubish, posYrubish;

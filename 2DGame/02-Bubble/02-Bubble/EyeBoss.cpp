@@ -13,16 +13,31 @@
 
 enum EyeBossAnims
 {
-	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT
+	STAND_ONE, ATACK_ONE, STAND_TWO, ATACK_TWO
 };
 
 
 void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 {
 	//Creem els sprites necesaris
-	spritesheet.loadFromFile("images/NPC_126.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(glm::ivec2(110, 135), glm::vec2(.43, .08), &spritesheet, &shaderProgram);
-	//sprite = Sprite::createSprite(glm::ivec2(36, 36), glm::vec2(.25, .25), &spritesheet, &shaderProgram);
+	spritesheet.loadFromFile("images/eye_1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	sprite = Sprite::createSprite(glm::ivec2(110, 161), glm::vec2(.107, .63), &spritesheet, &shaderProgram);
+	sprite->setNumberAnimations(4);
+
+	sprite->setAnimationSpeed(STAND_ONE, 4);
+	sprite->addKeyframe(STAND_ONE, glm::vec2(0.f, 0.f));
+	sprite->addKeyframe(STAND_ONE, glm::vec2(.107f, 0.f));
+
+	sprite->setAnimationSpeed(ATACK_ONE, 8);
+	sprite->addKeyframe(ATACK_ONE, glm::vec2(.214f, 0.f));
+
+	sprite->setAnimationSpeed(STAND_TWO, 4);
+	sprite->addKeyframe(STAND_TWO, glm::vec2(.321f, 0.f));
+	sprite->addKeyframe(STAND_TWO, glm::vec2(.428f, 0.f));
+
+	sprite->setAnimationSpeed(ATACK_TWO, 8);
+	sprite->addKeyframe(ATACK_TWO, glm::vec2(.535f, 0.f));
+
 	modo = 0;
 	numAtack = 0;
 	numPersecusio = 0;
@@ -31,11 +46,13 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	patrullar = true;
 	estat = 1;
 	angle = 0;
+	vida = 5;
 	playerXanterior = Game::instance().getPlayerPos().x;
 
 	tileMapDispl = tileMapPos;
 	velocitat = 10;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posEyeBoss.x), float(tileMapDispl.y + posEyeBoss.y)));
+	sprite->changeAnimation(0);
 
 }
 
@@ -68,9 +85,18 @@ void EyeBoss::update(int deltaTime)
 			doPatrullar(angle);
 			deltaXPlayer = 0;
 		}
-		else if (numAtack < 3)
+		else if (numAtack < 3){
 			doAtack1();
-		else doRecuperaPoiscio();
+			if (vida < 6)
+				sprite->changeAnimation(3);
+			else sprite->changeAnimation(1);
+		}
+		else {
+			doRecuperaPoiscio();
+			if (vida < 6)
+				sprite->changeAnimation(2);
+			else sprite->changeAnimation(0);
+		}
 	}
 
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posEyeBoss.x), float(tileMapDispl.y + posEyeBoss.y)));
