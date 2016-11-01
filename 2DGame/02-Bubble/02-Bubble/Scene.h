@@ -60,7 +60,7 @@ private:
 	bool showDinamicInterface;
 	float sizeWorldX, sizeWorldY;
 	TileMap *map;
-	Monster *monsters[256];
+	Monster *monsters[NUM_MONSTERS];
 	Skull *skull;
 	EyeBoss * eyeBoss;
 	GLuint numMonsters;
@@ -73,7 +73,7 @@ private:
 	Texture background, background2, background3;
 	Inventary *inventary;
 	int idMovingItem;
-	bool mouse, pressed, incremented;
+	bool mouse, pressed, incremented, decremented;
 	int activeItem;
 	void initMosntersPosition();
 	

@@ -50,7 +50,7 @@ void MainMenu::update(int deltaTime)
 	}
 	if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
 		Game::instance().getScreenMousePos(&sx, &sy);
-		if (sx > 200 && sx < 400 && sy > 200 && sy < 280)
+		if (sx > 395 && sx < 395+240 && sy > 270 && sy < 270+85)
 			Game::instance().setModeGame();
 	}
 }
@@ -123,7 +123,7 @@ void MainMenu::renderBackground(){
 void MainMenu::initBackground(){
 
 	//carreguem textura (el background bo es el 23)
-	background.loadFromFile("images/backMenu.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	background.loadFromFile("images/backgroundMenu.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	int width = background.width();
 	int heigth = background.height();
 	//Aqui definim la geometria i les cordenades de textura

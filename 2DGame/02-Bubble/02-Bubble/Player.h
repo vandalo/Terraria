@@ -41,10 +41,10 @@ public:
 	
 private:
 
-
+	int regenVida;
 	int life, maxLife;
 	int atack;
-	bool bJumping, atacking;
+	bool bJumping, atacking, isFlying, canFly;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int jumpAngle, startY;
 	Texture spritesheet;
@@ -53,6 +53,7 @@ private:
 	TileMap *map;
 	int activeItem;
 	float angleWeapon;
+
 
 };
 

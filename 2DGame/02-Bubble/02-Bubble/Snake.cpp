@@ -50,7 +50,8 @@ void Snake::init()
 
 void Snake::update(int deltaTime)
 {
-	if (!running)Game::instance().setModeGame();
+	if (!running) Game::instance().setModeGame();
+	else{
 		currentTime += deltaTime;
 
 		if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)){
@@ -65,27 +66,28 @@ void Snake::update(int deltaTime)
 		else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)){
 			changeDirection(GLUT_KEY_DOWN);
 		}
-	if (fps == 0){
-		fps = 10;
-		//Then
-		// Move in direction indicated
-		switch (direction) {
-		case GLUT_KEY_LEFT: move(-1, 0);
-			break;
-		case GLUT_KEY_DOWN: move(0, 1);
-			break;
-		case GLUT_KEY_RIGHT: move(1, 0);
-			break;
-		case GLUT_KEY_UP: move(0, -1);
-			break;
-		}
+		if (fps == 0){
+			fps = 10;
+			//Then
+			// Move in direction indicated
+			switch (direction) {
+			case GLUT_KEY_LEFT: move(-1, 0);
+				break;
+			case GLUT_KEY_DOWN: move(0, 1);
+				break;
+			case GLUT_KEY_RIGHT: move(1, 0);
+				break;
+			case GLUT_KEY_UP: move(0, -1);
+				break;
+			}
 
-		// Reduce snake values on map by 1
-		for (int i = 0; i < size; i++) {
-			if (map[i] > 0) map[i]--;
+			// Reduce snake values on map by 1
+			for (int i = 0; i < size; i++) {
+				if (map[i] > 0) map[i]--;
+			}
 		}
+		else fps--;
 	}
-	else fps--;
 }
 
 void Snake::changeDirection(int key) {
@@ -133,7 +135,6 @@ void Snake::move(int dx, int dy) {
 
 void Snake::render()
 {
-
 	glm::mat4 modelview;
 	projection = glm::ortho((float)(0), (float)SCREEN_WIDTH,
 		(float)SCREEN_HEIGHT, (float)(0));

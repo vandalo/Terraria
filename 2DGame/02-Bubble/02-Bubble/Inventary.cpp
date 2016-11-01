@@ -10,15 +10,18 @@ Inventary::Inventary(ShaderProgram &texProgram)
 
 	spriteSheetItems.loadFromFile("images/items.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	hasChange = false;
+
 	//TESTING
-	putItem(PICK, 0, texProgram);
-	//putItem(PICK, 1, texProgram);
-	//putItem(WOODEN_SWORD, 1, texProgram);
+	for (int i = 1; i < NUM_ITEMS; i++){
+		putItem(i, i, texProgram);
+	}
+	/*putItem(PICK, 0, texProgram);
 	putItem(WOOD, 1, texProgram);
-	//putItem(WOOD, 0, texProgram);
 	putItem(WOOD, 2, texProgram);
 	putItem(WOOD, 4, texProgram);
 	putItem(WOOD, 3, texProgram);
+	putItem(FLY_BOOTS, 8, texProgram);
+	putItem(DIAMOND_SWORD, 11, texProgram);*/
 
 }
 
@@ -49,9 +52,9 @@ void Inventary::render10objects(){
 	for (int i = 0; i < 10; i++){
 		if (arrayInventary[i].id != 0 && idMovingItem != i){
 			arrayInventary[i].spriteItem->setPosition(glm::vec2(float(posX10objectsInventary + ((i % 10) * 35)), float(posY10objectsInventary)));
-			arrayInventary[i].spriteItem->render(3.1416/2);
+			arrayInventary[i].spriteItem->render(-3.1416);
 		}
-		else if (idMovingItem == i) arrayInventary[i].spriteItem->render(3.1416/2);
+		else if (idMovingItem == i) arrayInventary[i].spriteItem->render(-3.14162);
 	}
 }
 
@@ -65,16 +68,16 @@ void Inventary::renderRestobjects(){
 		}
 		if (arrayInventary[i].id != 0 && idMovingItem != i){
 			arrayInventary[i].spriteItem->setPosition(glm::vec2(float(posXobjectsInventary + ((i % 10) * 35)), float(posYobjectsInventary - (cont * 35))));
-			arrayInventary[i].spriteItem->render(3.1416 / 2);
+			arrayInventary[i].spriteItem->render(-3.1416);
 		}
-		else if (idMovingItem == i) arrayInventary[i].spriteItem->render(3.1416 / 2);
+		else if (idMovingItem == i) arrayInventary[i].spriteItem->render(-3.1416);
 	}
 	for (int i = 50; i < 58; i++){
 		if (arrayInventary[i].id != 0 && idMovingItem != i){
 			arrayInventary[i].spriteItem->setPosition(glm::vec2(float(posXset), float(posYset - ((i-50) * 35))));
-			arrayInventary[i].spriteItem->render(3.1416 / 2);
+			arrayInventary[i].spriteItem->render(-3.1416);
 		}
-		else if (idMovingItem == i) arrayInventary[i].spriteItem->render(3.1416 / 2);
+		else if (idMovingItem == i) arrayInventary[i].spriteItem->render(-3.1416);
 	}
 }
 
@@ -101,6 +104,106 @@ Item Inventary::setItem(int idItem, ShaderProgram &texProgram){
 	case WOOD:
 		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (WOOD - 1)), 0.f));
 		item.id = WOOD;
+		return item;
+		break;
+	case IRON_SWORD:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (IRON_SWORD - 1)), 0.f));
+		item.id = IRON_SWORD;
+		return item;
+		break;
+	case DIAMOND_BAR:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_BAR - 1)), 0.f));
+		item.id = DIAMOND_BAR;
+		return item;
+		break;
+	case GOLD_BAR:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (GOLD_BAR - 1)), 0.f));
+		item.id = GOLD_BAR;
+		return item;
+		break;
+	case BRONZE_BAR:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (BRONZE_BAR - 1)), 0.f));
+		item.id = BRONZE_BAR;
+		return item;
+		break;
+	case IRON_BAR:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (IRON_BAR - 1)), 0.f));
+		item.id = IRON_BAR;
+		return item;
+		break;
+	case FLY_BOOTS:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (FLY_BOOTS - 1)), 0.f));
+		item.id = FLY_BOOTS;
+		return item;
+		break;
+	case DIAMOND_SWORD:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_SWORD - 1)), 0.f));
+		item.id = DIAMOND_SWORD;
+		return item;
+		break;
+	case BRONZE_BOOTS:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (BRONZE_BOOTS - 1)), 0.f));
+		item.id = BRONZE_BOOTS;
+		return item;
+		break;
+	case IRON_BOOTS:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (IRON_BOOTS - 1)), 0.f));
+		item.id = IRON_BOOTS;
+		return item;
+		break;
+	case DIAMOND_BOOTS:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_BOOTS - 1)), 0.f));
+		item.id = DIAMOND_BOOTS;
+		return item;
+		break;
+	case GOLD_BOOTS:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (GOLD_BOOTS - 1)), 0.f));
+		item.id = GOLD_BOOTS;
+		return item;
+		break;
+	case BRONZE_ARMOR:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (BRONZE_ARMOR - 1)), 0.f));
+		item.id = BRONZE_ARMOR;
+		return item;
+		break;
+	case IRON_ARMOR:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (IRON_ARMOR - 1)), 0.f));
+		item.id = IRON_ARMOR;
+		return item;
+		break;
+	case DIAMOND_ARMOR:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_ARMOR - 1)), 0.f));
+		item.id = DIAMOND_ARMOR;
+		return item;
+		break;
+	case GOLD_ARMOR:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (GOLD_ARMOR - 1)), 0.f));
+		item.id = GOLD_ARMOR;
+		return item;
+		break;
+	case BRONZE_HELMET:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (BRONZE_HELMET - 1)), 0.f));
+		item.id = BRONZE_HELMET;
+		return item;
+		break;
+	case IRON_HELMET:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (IRON_HELMET - 1)), 0.f));
+		item.id = IRON_HELMET;
+		return item;
+		break;
+	case DIAMOND_HELMET:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_HELMET - 1)), 0.f));
+		item.id = DIAMOND_HELMET;
+		return item;
+		break;
+	case GOLD_HELMET:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (GOLD_HELMET - 1)), 0.f));
+		item.id = GOLD_HELMET;
+		return item;
+		break;
+	case HEARTH_RING:
+		item.spriteItem->setTextCord(glm::vec2((movmentTextCord * (HEARTH_RING - 1)), 0.f));
+		item.id = HEARTH_RING;
 		return item;
 		break;
 	default:

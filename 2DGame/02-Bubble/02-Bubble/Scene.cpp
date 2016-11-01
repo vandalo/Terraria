@@ -34,7 +34,6 @@ void Scene::init()
 	initShaders();
 	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 	
-	numMonsters = 20;
 	sizeWorldX = 50000;
 	sizeWorldY = 50000;
 	idMovingItem = -1;
@@ -46,15 +45,18 @@ void Scene::init()
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 
-	player->setPosition(glm::vec2(678 * map->getTileSize(), 204 * map->getTileSize()));
+	player->setPosition(glm::vec2(595 * map->getTileSize(), 335 * map->getTileSize()));
 	player->setTileMap(map);
 	inventary = new Inventary(texProgram);
 	inventary->setActiveItem(1);
 	if (Game::instance().getFood() > 5){
 		inventary->putItem(WOODEN_SWORD, 9, texProgram);
 	}
+	else{
+		inventary->putItem(FLY_BOOTS, 9, texProgram);
+	}
 
-	for (int i = 0; i < numMonsters; i++){
+	for (int i = 0; i < NUM_MONSTERS; i++){
 		monsters[i] = new Monster();
 		monsters[i]->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	}
@@ -65,8 +67,6 @@ void Scene::init()
 	eyeBoss->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	eyeBoss->setPosition(glm::vec2(584 * map->getTileSize(), 335 * map->getTileSize()));
 
-	
-	//eyeBoss->setInitPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize() + 800, INIT_PLAYER_Y_TILES * map->getTileSize() - 300));
 	eyeBoss->setInitPosition(glm::vec2(584 * map->getTileSize(), 335 * map->getTileSize()));
 	eyeBoss->setRadiPatrulla(60);
 	eyeBoss->setTileMap(map);
@@ -92,18 +92,23 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 
 	inventary->update();
-	if (!Game::instance().getSpecialKey(GLUT_KEY_DOWN))incremented = false;
+	if (!Game::instance().getSpecialKey(GLUT_KEY_UP))incremented = false;
+	if (!Game::instance().getSpecialKey(GLUT_KEY_DOWN))decremented = false;
 	if (!Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) pressed = false;
 	if (showDinamicInterface){
-		if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && !incremented){
+		if (Game::instance().getSpecialKey(GLUT_KEY_UP) && !incremented){
 			crafting->incrementPointer();
 			incremented = true;
+		}
+		if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && !decremented){
+			crafting->decrementPointer();
+			decremented = true;
 		}
 	}
 	else{
 		player->update(deltaTime);
 	}
-	for (int i = 0; i < numMonsters; i++){
+	for (int i = 0; i < NUM_MONSTERS; i++){
 			monsters[i]->update(deltaTime);
 	}
 	eyeBoss->update(deltaTime);
@@ -154,7 +159,7 @@ void Scene::update(int deltaTime)
 				crafting->update();
 			}
 			else inventary->swapItem(idMovingItem, idClick);
-			if (idClick < 58 && idClick >= 50) player->updatePlayerSet();
+			player->updatePlayerSet();
 			setPlayerItem(getActiveItem());
 		}
 		idMovingItem = -1;
@@ -180,7 +185,7 @@ void Scene::render()
 	renderBackground();
 	map->render();
 	player->render();
-	for (int i = 0; i < numMonsters; i++){
+	for (int i = 0; i < NUM_MONSTERS; i++){
 		monsters[i]->render();
 	}
 	eyeBoss->render();
@@ -265,8 +270,8 @@ void Scene::initBackground(){
 	int width = background.width();
 	int heigth = background.height();
 	//Aqui definim la geometria i les cordenades de textura
-	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 360.f), glm::vec2(sizeWorldX, -sizeWorldY) };
-	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(sizeWorldX *2 / width, (360+sizeWorldY)/heigth) };
+	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 356*16.f), glm::vec2(sizeWorldX, 0.f) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(sizeWorldX * 2 / width, - 200*16 / heigth) };
 
 	//Definim els 24 vertex per pintar la textura 12 per cada triangle
 	float vertices[24] = { 
@@ -293,8 +298,8 @@ void Scene::initBackground2(){
 	int heigth = background2.height();
 	int width = background2.width();
 	//Aqui definim la geometria i les cordenades de textura
-	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, -500.f), glm::vec2(sizeWorldX, -sizeWorldY) };
-	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(sizeWorldX * 2 /width, 50.f/heigth) };
+	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 356 * 16.f), glm::vec2(sizeWorldX, sizeWorldY) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(sizeWorldX * 2 / width, (sizeWorldY - 356 * 16.f) / heigth) };
 
 	//Definim els 24 vertex per pintar la textura 12 per cada triangle
 	float vertices[24] = {
@@ -323,7 +328,7 @@ void Scene::initBackground3(){
 	int heigth = background3.height();
 	int width = background3.width();
 	//Aqui definim la geometria i les cordenades de textura
-	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 480.f), glm::vec2(sizeWorldX, 480.f-16.f) };
+	glm::vec2 geom[2] = { glm::vec2(-sizeWorldX, 356 * 16.f), glm::vec2(sizeWorldX, 356 * 16.f - 16.f) };
 	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(sizeWorldX  * 2 / width, 0.f) };
 
 	//Definim els 24 vertex per pintar la textura 12 per cada triangle
@@ -436,16 +441,18 @@ void Scene::mousePress(){
 }
 
 void Scene::initMosntersPosition(){
-	for (int i = 0; i < numMonsters; i++){
+	for (int i = 0; i < NUM_MONSTERS; i++){
 		monsters[i]->setTileMap(map);
+		if(i < 24)
+			monsters[i]->setId(1);
+		else 
+			monsters[i]->setId(2);
 		monsters[i]->setEsMouDreta(i % 2 == 0);
 		monsters[i]->setRadiPErseguir(200);
 		monsters[i]->setRadiPatrulla(200);
 		switch (i){
 			//TODO CANVIAR EL 0
 		case 0:
-			monsters[i]->setPosition(glm::vec2(77 * map->getTileSize(), 332 * map->getTileSize()));
-			monsters[i]->setInitPosition(glm::vec2(77 * map->getTileSize(), 332 * map->getTileSize()));
 			break;
 		case 1:
 			monsters[i]->setPosition(glm::vec2(77 * map->getTileSize(), 332 * map->getTileSize()));
@@ -538,6 +545,10 @@ void Scene::initMosntersPosition(){
 			monsters[i]->setPosition(glm::vec2(712 * map->getTileSize(), 372 * map->getTileSize()));
 			monsters[i]->setInitPosition(glm::vec2(712 * map->getTileSize(), 372 * map->getTileSize()));
 			break;
+		//SLIMES
+		case 24: 			
+			monsters[i]->setPosition(glm::vec2(570 * map->getTileSize(), 335 * map->getTileSize()));
+			monsters[i]->setInitPosition(glm::vec2(570 * map->getTileSize(), 335 * map->getTileSize()));
 		default:
 			break;
 		}

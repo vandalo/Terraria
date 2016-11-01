@@ -41,7 +41,9 @@ public:
 	bool colisionWeapon();
 	int getVida(){ return vida; };
 	int deathTime, maxLife;
-
+	void doPatrullarWithJumpV2();
+	void doPerseguirWithJumpV2();
+	void setId(int id);
 private:
 	
 	int vida, atack, id;

@@ -8,7 +8,8 @@
 
 #define JUMP_ANGLE_STEP 4
 #define JUMP_HEIGHT 96
-#define FALL_STEP 4
+#define FALL_STEP 8
+#define SPACEBAR 32
 
 
 enum PlayerAnims
@@ -21,9 +22,12 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 {
 	bJumping = false;
 	atacking = false;
+	isFlying = false;
+	canFly = false;
+	regenVida = 0;
 	atack = 1;
-	life = 15;
-	maxLife = 15;
+	life = LIFE;
+	maxLife = LIFE;
 	weaponSprite = NULL;
 	activeItem = 1;
 	angleWeapon = -2.5;
@@ -56,6 +60,11 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 void Player::update(int deltaTime)
 {
+	regenVida++;
+	if (regenVida > REGENERATION_LIFE_RATE){
+		regenVida = 0;
+		if (life < maxLife)life++;
+	}
 	sprite->update(deltaTime);
 	if(Game::instance().getSpecialKey(GLUT_KEY_LEFT))
 	{
@@ -87,11 +96,11 @@ void Player::update(int deltaTime)
 			sprite->changeAnimation(STAND_RIGHT);
 	}
 	
-	if(bJumping)
+	if (bJumping)
 	{
 		if (!map->collisionMoveUp(posPlayer, glm::ivec2(32, 32), &posPlayer.y)){
 			jumpAngle += JUMP_ANGLE_STEP;
-			if(jumpAngle == 180)
+			if (jumpAngle == 180)
 			{
 				bJumping = false;
 				posPlayer.y = startY;
@@ -111,9 +120,9 @@ void Player::update(int deltaTime)
 	else
 	{
 		posPlayer.y += FALL_STEP;
-		if(map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y))
+		if (map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y))
 		{
-			if(Game::instance().getSpecialKey(GLUT_KEY_UP))
+			if (Game::instance().getSpecialKey(GLUT_KEY_UP))
 			{
 				bJumping = true;
 				jumpAngle = 0;
@@ -121,7 +130,18 @@ void Player::update(int deltaTime)
 			}
 		}
 	}
-	
+	//To FLY
+	if (Game::instance().getKey(SPACEBAR) && canFly)
+	{
+		jumpAngle = 0;
+		startY = posPlayer.y;
+		bJumping = true;
+		isFlying = true;
+	}
+	else if (isFlying){
+		bJumping = false;
+		isFlying = false;
+	}
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 }
 
@@ -175,6 +195,21 @@ int Player::getMaxLife(){
 
 void Player::setActiveItem(int idItem){
 	activeItem = idItem;
+	switch (idItem)
+	{
+	case WOODEN_SWORD:
+		atack = 2;
+		break;
+	case IRON_SWORD:
+		atack = 3;
+		break;
+	case DIAMOND_SWORD:
+		atack = 5;
+		break;
+	default:
+		break;
+	}
+	updatePlayerSet();
 }
 
 void Player::upgareAngleWeapon(){
@@ -209,10 +244,73 @@ void Player::updateLife(int diff){
 }
 
 void Player::updatePlayerSet(){
+	canFly = false;
+	int lifeMaxBefore = maxLife;
+	maxLife = LIFE;
 	//Check inventary set position (50-58)
-	for (int i = 50; i < 58; i++){
+	//Helmet
+	switch (Game::instance().getScene()->getInventary()->getId(50)){
+	case BRONZE_HELMET:
+		maxLife += 1;
+		break;
+	case IRON_HELMET:
+		maxLife += 2;
+		break;
+	case GOLD_HELMET:
+		maxLife += 3;
+		break;
+	case DIAMOND_HELMET:
+		maxLife += 5;
+		break;
+	default:
+		break;
+	}
+	//Armor
+	switch (Game::instance().getScene()->getInventary()->getId(51)){
+	case BRONZE_ARMOR:
+		maxLife += 2;
+		break;
+	case IRON_ARMOR:
+		maxLife += 3;
+		break;
+	case GOLD_ARMOR:
+		maxLife += 4;
+		break;
+	case DIAMOND_ARMOR:
+		maxLife += 6;
+		break;
+	default:
+		break;
+	}
+	switch (Game::instance().getScene()->getInventary()->getId(52)){
+	case BRONZE_BOOTS:
+		maxLife += 1;
+		break;
+	case IRON_BOOTS:
+		maxLife += 2;
+		break;
+	case GOLD_BOOTS:
+		maxLife += 3;
+		break;
+	case DIAMOND_BOOTS:
+		maxLife += 5;
+		break;
+	default:
+		break;
+	}
+	for (int i = 53; i < 58; i++){
 		if (Game::instance().getScene()->getInventary()->getId(i) != 0){
-			//TODO: 
+			switch (Game::instance().getScene()->getInventary()->getId(i)){
+			case HEARTH_RING:
+				maxLife += 5;
+				break;
+			case FLY_BOOTS:
+				canFly = true;
+			default:
+				break;
+
+			}
 		}
 	}
+	life += maxLife - lifeMaxBefore;
 }

@@ -13,7 +13,7 @@
 
 enum MonsterAnims
 {
-	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT
+	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT, SLIME
 };
 
 
@@ -27,7 +27,7 @@ void Monster::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	maxLife = 20;
 	spritesheet.loadFromFile("images/monsters.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(32, 34), glm::vec2(0.5, 0.156), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(4);
+	sprite->setNumberAnimations(5);
 
 	sprite->setAnimationSpeed(STAND_LEFT, 8);
 	sprite->addKeyframe(STAND_LEFT, glm::vec2(0.f, 0.f));
@@ -45,6 +45,10 @@ void Monster::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.5, 0.156));
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.5, 0.3125));
 
+	sprite->setAnimationSpeed(SLIME, 8);
+	sprite->addKeyframe(SLIME, glm::vec2(0., 0.4685f));
+	sprite->addKeyframe(SLIME, glm::vec2(0.5, 0.4685f));
+
 	sprite->changeAnimation(0);
 	tileMapDispl = tileMapPos;
 	
@@ -55,6 +59,9 @@ void Monster::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 }
 
+void Monster::setId(int idMonstre){
+	id = idMonstre;
+}
 void Monster::update(int deltaTime)
 {
 	sprite->update(deltaTime);
@@ -67,8 +74,18 @@ void Monster::update(int deltaTime)
 			patrullar = true;
 			velocitat = 1;
 		}
-		if (patrullar) doPatrullarWithJump();
-		else doPerseguirWithJump();
+		if (patrullar){
+			if(id == 1) 
+				doPatrullarWithJump();
+			else if (id == 2)
+				doPatrullarWithJumpV2();
+		}
+		else{
+			if (id == 1)
+				doPerseguirWithJump();
+			else if (id == 2)
+				doPerseguirWithJumpV2();
+		}
 		colisionPlayer();
 		sprite->setPosition(glm::vec2(float(tileMapDispl.x + posMonster.x), float(tileMapDispl.y + posMonster.y)));
 	}
@@ -386,8 +403,14 @@ bool Monster::colisionWeapon(){
 	bool res = false;
 	float increment;
 	bool dreta = Game::instance().getScene()->player->getAnimation() == 1 || Game::instance().getScene()->player->getAnimation() == 3;
-	if (dreta) weaponBoxMax.x = weaponBoxMax.x + 16;
-	else weaponBoxMin.x = weaponBoxMin.x - 16;
+	if (dreta) {
+		weaponBoxMax.x += 16;
+		weaponBoxMin.x += 16;
+	}
+	else{
+		weaponBoxMin.x -= 16;
+		weaponBoxMax.x -= 16;
+	}
 	if (weaponBoxMin.x < monsterBoxMax.x && monsterBoxMin.x < weaponBoxMax.x){
 		if (weaponBoxMin.y < monsterBoxMax.y && monsterBoxMin.y < weaponBoxMax.y){
 			res = true;
@@ -449,4 +472,106 @@ glm::vec2 Monster::getBoundingBoxMin(){
 glm::vec2 Monster::getBoundingBoxMax(){
 	glm::vec2 maxs = glm::vec2(posMonster.x + sprite->getSpriteSize().x / 2, posMonster.y + sprite->getSpriteSize().y / 2);
 	return maxs;
+}
+
+
+void Monster::doPatrullarWithJumpV2(){
+	if (sprite->animation() != SLIME) sprite->changeAnimation(SLIME);
+	if (!esMouDreta)
+	{
+		posMonster.x -= velocitat;
+		if (map->collisionMoveLeft(posMonster, glm::ivec2(32, 32)))
+		{
+		setEsMouDreta(true);
+		posMonster.x += velocitat;
+		}
+	}
+	else if (esMouDreta)
+	{
+		posMonster.x += velocitat;
+		if (map->collisionMoveRight(posMonster, glm::ivec2(32, 32)))
+		{
+			setEsMouDreta(false);
+			posMonster.x -= velocitat;
+		}
+	}
+
+	if (bJumping)
+	{
+		if (!map->collisionMoveUp(posMonster, glm::ivec2(32, 32), &posMonster.y)){
+			jumpAngle += JUMP_ANGLE_STEP;
+			if (jumpAngle == 90)
+			{
+				bJumping = false;
+				posMonster.y = startY;
+			}
+			else
+			{
+				posMonster.y = int((startY - 150 * sin(3.14159f * jumpAngle / 180.f)));
+				if (jumpAngle > 90)
+					bJumping = !map->collisionMoveDown(posMonster, glm::ivec2(32, 32), &posMonster.y);
+			}
+		}
+		else
+		{
+			bJumping = false;
+		}
+	}
+	else
+	{
+		posMonster.y += FALL_STEP;
+		if (map->collisionMoveDown(posMonster, glm::ivec2(32, 32), &posMonster.y))
+		{
+			bJumping = true;
+			jumpAngle = 0;
+			startY = posMonster.y;
+		}
+	}
+}
+
+
+void Monster::doPerseguirWithJumpV2(){
+	glm::vec2 playerPos = Game::instance().getPlayerPos();
+	if (playerPos[0] < posMonster.x - velocitat){
+		setEsMouDreta(false);
+		if (!map->collisionMoveLeft(posMonster, glm::ivec2(32, 32)))
+			posMonster.x -= velocitat;
+	}
+	else if (playerPos[0] > posMonster.x + velocitat){
+		setEsMouDreta(true);
+		if (!map->collisionMoveRight(posMonster, glm::ivec2(32, 32)))
+			posMonster.x += velocitat;
+	}
+	if (bJumping)
+	{
+		if (!map->collisionMoveUp(posMonster, glm::ivec2(32, 32), &posMonster.y)){
+			jumpAngle += JUMP_ANGLE_STEP;
+			if (jumpAngle == 180)
+			{
+				bJumping = false;
+				posMonster.y = startY;
+			}
+			else
+			{
+				posMonster.y = int(startY - 150 * sin(3.14159f * jumpAngle / 180.f));
+				if (jumpAngle > 90)
+					bJumping = !map->collisionMoveDown(posMonster, glm::ivec2(32, 32), &posMonster.y);
+			}
+		}
+		else
+		{
+			bJumping = false;
+		}
+	}
+	else
+	{
+		posMonster.y += FALL_STEP;
+		if (map->collisionMoveDown(posMonster, glm::ivec2(32, 32), &posMonster.y))
+		{
+			bJumping = true;
+			jumpAngle = 0;
+			startY = posMonster.y;
+		}
+	}
+
 }
