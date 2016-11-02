@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Game.h"
 
+
 void Game::init()
 {
 	bPlay = true;
@@ -108,24 +109,26 @@ void Game::getScreenMousePos(int * x, int * y) {
 
 
 
-void Game::getWorldMousePos(double * x, double * y, glm::mat4 &modelview, glm::mat4 &projectionMatrix) {
-	float mouse_current_z;
-	glReadPixels(mouse.x, mouse.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &mouse_current_z);
-	glm::vec3 windowCoordinates = glm::vec3((double)mouse.x,(double)( SCREEN_HEIGHT - mouse.y), double(mouse_current_z));	
-
-	GLint m_viewport[4];
-
-	glGetIntegerv(GL_VIEWPORT, m_viewport);
-
-	glm::vec4 viewport = glm::make_vec4( m_viewport);
-
-
-	glm::vec3 worldCoordinates = glm::unProject(windowCoordinates, modelview, projectionMatrix, viewport);
-	//printf("(%f, %f, %f)\n", worldCoordinates.x, worldCoordinates.y, worldCoordinates.z);
+void Game::getWorldMousePos(double * x, double * y, double left, double bottom) {
 	
 
-	*x = worldCoordinates.x;
-	*y = worldCoordinates.y;
+
+	printf("Mouse Coords: %d, %d \n", mouse.x, mouse.y);
+
+	printf("Left, Bottom: %f, %f\n", left, bottom);
+
+	int inverseY = SCREEN_HEIGHT - mouse.y;
+
+	printf("Corrected Y axis, mouse Coords : %d, %d \n", mouse.x, inverseY);
+
+	double worldX = left + mouse.x;
+	double worldY = bottom + mouse.y;
+
+	
+
+
+	*x = worldX;
+	*y = worldY;
 
 }
 

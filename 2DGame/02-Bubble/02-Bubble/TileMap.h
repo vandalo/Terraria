@@ -27,6 +27,7 @@ public:
 		int vertexIndex;
 		int id;
 		int vida;
+
 	};
 
 	// Tile maps can only be created inside an OpenGL context
@@ -46,8 +47,8 @@ public:
 	bool collisionMoveUp(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
 
 	
-	Tile * getAtWorldPosition(double x, double y);
-	void TileMap::setTile(int id, int x, int y, bool redraw);
+	void setWorldTile(int id, double x, double y);
+	void setTile(int id, int x, int y, bool redraw);
 private:
 	bool loadLevel(const string &levelFile);
 	void prepareArrays(const glm::vec2 &minCoords);

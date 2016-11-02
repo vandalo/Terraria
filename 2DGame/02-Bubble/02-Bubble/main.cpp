@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <playsoundapi.h>
 #include "Game.h"
 
 
@@ -108,6 +109,10 @@ int main(int argc, char **argv)
 	Game::instance().init();
 	prevTime = glutGet(GLUT_ELAPSED_TIME);
 	// GLUT gains control of the application
+
+	PlaySoundA((LPCSTR) "music/bensound-psychedelic.wav", NULL, SND_FILENAME | SND_ASYNC);
+	
+	
 	glutMainLoop();
 
 	return 0;

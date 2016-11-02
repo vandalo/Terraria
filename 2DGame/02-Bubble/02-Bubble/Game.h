@@ -50,7 +50,7 @@ public:
 	bool getKey(int key) const;
 	bool getSpecialKey(int key) const;
 	void getScreenMousePos(int * x, int * y);
-	void getWorldMousePos(double * x, double * y, glm::mat4 &modelview, glm::mat4 &projection);
+	void getWorldMousePos(double * x, double * y, double left, double bottom);
 	bool isMousePressed(int button);
 	void setModeGame();
 	void setPlayerItem(int idItem, Sprite* sprite);
