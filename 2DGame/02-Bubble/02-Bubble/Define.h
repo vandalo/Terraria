@@ -2,7 +2,7 @@
 #define SIZE_SET 8
 #define SPRITESHEETWIDTH 1024
 #define REGENERATION_LIFE_RATE 4500
-#define NUM_MONSTERS 50
+#define NUM_MONSTERS 30
 
 
 #define posXheart (SCREEN_WIDTH - 200)

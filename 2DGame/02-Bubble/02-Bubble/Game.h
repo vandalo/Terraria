@@ -5,6 +5,9 @@
 #include "Scene.h"
 #include "MainMenu.h"
 #include "Snake.h"
+#include "HelpMenu.h"
+#include "DeathMenu.h"
+#include "WinGame.h"
 
 
 #define SCREEN_WIDTH 1024
@@ -54,7 +57,12 @@ public:
 	void getWorldMousePos(double * x, double * y, glm::mat4 &modelview, glm::mat4 &projection);
 	bool isMousePressed(int button);
 	void setModeGame();
+	void setModeGameWithOutInit();
 	void setModeSnake();
+	void setModeDeath();
+	void setModeMenu();
+	void setModeHelp();
+	void setModeWin();
 	void setPlayerItem(int idItem, Sprite* sprite);
 	int getMovingItem(){ return scene.getMovingItem(); };
 	ShaderProgram getShaderProgram(){ return scene.getShaderProgram(); };
@@ -69,7 +77,7 @@ public:
 private:
 	enum sceneStates
 	{
-		MAINMENU, GAME, CREDITS, HELP, SNAKE
+		MAINMENU, GAME, CREDITS, HELP, SNAKE, DEATH, WIN
 	};
 
 	bool bPlay;                       // Continue to play game?
@@ -77,6 +85,9 @@ private:
 	Snake snake;					  //Easter Egg snake
 	Scene scene;                      // Scene to render
 	MainMenu mainMenu;			      // Main menu to render
+	HelpMenu help;				      //Help menu
+	WinGame winGame;
+	DeathMenu deathMenu;
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
 	Mouse mouse;

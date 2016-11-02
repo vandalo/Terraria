@@ -11,9 +11,9 @@ void StaticInterface::init(ShaderProgram &shaderProgram)
 	spritesheet.loadFromFile("images/Heart.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheetInventary.loadFromFile("images/Inventory.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spriteHeart = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(.25, .5), &spritesheet, &shaderProgram);
-	spriteBack10objects = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
-	spriteActiveObject = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
-	spriteActiveObject->setTextCord(glm::vec2(0.125, 0.f));
+	spriteBack10objects = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.1, 1.), &spritesheetInventary, &shaderProgram);
+	spriteActiveObject = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.1, 1.), &spritesheetInventary, &shaderProgram);
+	spriteActiveObject->setTextCord(glm::vec2(0.1, 0.f));
 
 	life = Game::instance().getPlayerLife();
 	maxLife = Game::instance().getPlayerMaxLife();

@@ -21,17 +21,17 @@ void DinamicInterface::init(ShaderProgram &shaderProgram)
 {
 	spritesheetInventary.loadFromFile("images/Inventory.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheetInventarySmall.loadFromFile("images/Inventory_Back12_small.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	spriteBackObjects = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
-	spriteBackSet = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
-	spriteBackSet->setTextCord(glm::vec2(.375,0));
-	spriteObjectCraft = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
-	spriteCraftingActive = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
-	spriteCraftingActive->setTextCord(glm::vec2(0.25, 0.));
-	rubish = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
-	rubish->setTextCord(glm::vec2(.125*4,0.f));
-	spriteSetGuide = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
-
-
+	spriteBackObjects = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.1, 1.), &spritesheetInventary, &shaderProgram);
+	spriteBackSet = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.1, 1.), &spritesheetInventary, &shaderProgram);
+	spriteBackSet->setTextCord(glm::vec2(.1*3,0));
+	spriteObjectCraft = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.1, 1.), &spritesheetInventary, &shaderProgram);
+	spriteCraftingActive = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.1, 1.), &spritesheetInventary, &shaderProgram);
+	spriteCraftingActive->setTextCord(glm::vec2(0.1*2, 0.));
+	rubish = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.1, 1.), &spritesheetInventary, &shaderProgram);
+	rubish->setTextCord(glm::vec2(.1*4,0.f));
+	spriteSetGuide = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.1, 1.), &spritesheetInventary, &shaderProgram);
+	spriteHelp = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.1, 1.), &spritesheetInventary, &shaderProgram);
+	spriteHelp->setTextCord(glm::vec2(.1 * 8, 0.f));
 	//16 = distancia de marge, 35 distancia de linventari superior, 4 diferencia entre 35-31
 	posXrubish;
 	posYrubish;
@@ -39,8 +39,7 @@ void DinamicInterface::init(ShaderProgram &shaderProgram)
 
 void DinamicInterface::update(int deltaTime)
 {
-	//spriteHeart->update(deltaTime);
-	//spriteBackObjects->update(deltaTime);
+
 }
 
 void DinamicInterface::render(bool chest)
@@ -86,13 +85,18 @@ void DinamicInterface::render(bool chest)
 		}
 		else spriteObjectCraft->render();
 	}
+
+	spriteHelp->setPosition(glm::vec2(float(16), float(16)));
+	spriteHelp->render(3.1416);
+	
+
 	spriteBackObjects->setPosition(glm::vec2(float(posXrubish), float(posYrubish)));
 	spriteBackObjects->render();
 	rubish->setPosition(glm::vec2(float(posXrubish), float(posYrubish)));
 	rubish->render(3.1415);
 
 	//Pintem siluetes de on ha d'anar cada part del set
-	float movmentTextCord = (32.f / (float)256.);
+	float movmentTextCord = (32.f / (float)320.);
 	for (int i = 50; i < 53; i++){
 		spriteSetGuide->setPosition(glm::vec2(float(posXset) - 35, float(posYset - ((i - 50) * 35))));
 		if(i == 50)spriteSetGuide->setTextCord(glm::vec2((movmentTextCord * 6), 0.f));

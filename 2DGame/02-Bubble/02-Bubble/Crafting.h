@@ -7,7 +7,7 @@
 
 struct Craft{
 	int idItem;
-	Sprite *spriteItem;
+	glm::vec2 textCord;
 	bool crafteable;
 	bool isObjectCraft;
 	int itemsNeedId[3];
@@ -17,6 +17,7 @@ class Crafting
 {
 	Texture spriteSheetItems;
 	ShaderProgram *texProgram2;
+	Sprite *spriteItem;
 	Craft arrayCraft[NUM_ITEMS];
 	int itemPointerCraft;
 	
@@ -33,7 +34,7 @@ public:
 private:
 	void setCrafingItems();
 	bool isCrafeable(int idItem);
-	Sprite *setSprite(int idItem, ShaderProgram &texProgram);
+	glm::vec2 setSprite(int idItem);
 	int setPointer(int pointer);
 	int nextPointer(int pointer);
 	void setItemsNeeded(int i);

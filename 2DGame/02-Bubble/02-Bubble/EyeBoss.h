@@ -39,6 +39,7 @@ public:
 	glm::vec2 getBoundingBoxMax();
 	bool colision();
 	bool colisionWeapon();
+	int getLife(){ return vida; };
 
 private:
 	int playerXanterior;

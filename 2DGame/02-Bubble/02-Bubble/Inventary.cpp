@@ -15,14 +15,6 @@ Inventary::Inventary(ShaderProgram &texProgram)
 	for (int i = 1; i < NUM_ITEMS; i++){
 		putItem(i, i, texProgram);
 	}
-	/*putItem(PICK, 0, texProgram);
-	putItem(WOOD, 1, texProgram);
-	putItem(WOOD, 2, texProgram);
-	putItem(WOOD, 4, texProgram);
-	putItem(WOOD, 3, texProgram);
-	putItem(FLY_BOOTS, 8, texProgram);
-	putItem(DIAMOND_SWORD, 11, texProgram);*/
-
 }
 
 void Inventary::putItem(int idItem, int idCasella, ShaderProgram &texProgram){
@@ -40,11 +32,7 @@ void Inventary::render(bool showDinamicInterface){
 }
 
 void Inventary::update(){
-	for (int i = 0; i < 10; i++){
-		if (arrayInventary[i].id != 0){
-			arrayInventary[i].spriteItem->render();
-		}
-	}
+
 }
 
 void Inventary::render10objects(){

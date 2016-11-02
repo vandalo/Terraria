@@ -49,11 +49,8 @@ void Scene::init()
 	player->setTileMap(map);
 	inventary = new Inventary(texProgram);
 	inventary->setActiveItem(1);
-	if (Game::instance().getFood() > 5){
-		inventary->putItem(WOODEN_SWORD, 9, texProgram);
-	}
-	else{
-		inventary->putItem(FLY_BOOTS, 9, texProgram);
+	if (Game::instance().getFood() > 10){
+		inventary->putItem(FLY_BOOTS, 40, texProgram);
 	}
 
 	for (int i = 0; i < NUM_MONSTERS; i++){
@@ -83,90 +80,97 @@ void Scene::init()
 
 	showDinamicInterface = false;
 
-	//projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1.f), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
 }
 
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-
-	inventary->update();
-	if (!Game::instance().getSpecialKey(GLUT_KEY_UP))incremented = false;
-	if (!Game::instance().getSpecialKey(GLUT_KEY_DOWN))decremented = false;
-	if (!Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) pressed = false;
-	if (showDinamicInterface){
-		if (Game::instance().getSpecialKey(GLUT_KEY_UP) && !incremented){
-			crafting->incrementPointer();
-			incremented = true;
-		}
-		if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && !decremented){
-			crafting->decrementPointer();
-			decremented = true;
-		}
+	if (Game::instance().getPlayerLife() <= 0){
+		Game::instance().setModeDeath();
+	}
+	else if (eyeBoss->getLife() <= 0){
+		Game::instance().setModeWin();
 	}
 	else{
-		player->update(deltaTime);
-	}
-	for (int i = 0; i < NUM_MONSTERS; i++){
-			monsters[i]->update(deltaTime);
-	}
-	eyeBoss->update(deltaTime);
-	staticInterface->update(deltaTime);
-	dinamicInterface->update(deltaTime);
-	
-	int sx, sy;
-	double wx, wy;
-	Game::instance().getScreenMousePos(&sx, &sy);
-	int idClick = inventaryClick(sx, sy);
-	if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
-		Game::instance().getWorldMousePos(&wx, &wy, modelview , projection);
-		//If(!showDinamicInterface) canviar arma personaje
-		if (!showDinamicInterface){
-			if (idClick >= 0 && idClick < 10){
-				inventary->setActiveItem(idClick);
-				activeItem = idClick;
+		//inventary->update();
+		if (!Game::instance().getSpecialKey(GLUT_KEY_UP))incremented = false;
+		if (!Game::instance().getSpecialKey(GLUT_KEY_DOWN))decremented = false;
+		if (!Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) pressed = false;
+		if (showDinamicInterface){
+			if (Game::instance().getSpecialKey(GLUT_KEY_UP) && !incremented){
+				crafting->incrementPointer();
+				incremented = true;
 			}
-			else{
-				player->setAtacking();
-				player->upgareAngleWeapon();
+			if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && !decremented){
+				crafting->decrementPointer();
+				decremented = true;
 			}
 		}
-		//Crafting
-		else if (idClick == 59 && !pressed){
-			crafting->craftItem(crafting->getIdObejctToCraft(), texProgram);
-			crafting->update();
-			pressed = true;
-			setPlayerItem(getActiveItem());
-		}
-		//Drag and droop
 		else{
-			if(mouse && idMovingItem == -1){
-				if (idClick != -1 && idClick  >= 0 && idClick < 58 && inventary->getId(idClick) != 0){
-					idMovingItem = idClick;
-					mouse = true;
+			player->update(deltaTime);
+		}
+		for (int i = 0; i < NUM_MONSTERS; i++){
+			monsters[i]->update(deltaTime);
+		}
+		eyeBoss->update(deltaTime);
+		staticInterface->update(deltaTime);
+		//dinamicInterface->update(deltaTime);
+
+		int sx, sy;
+		Game::instance().getScreenMousePos(&sx, &sy);
+		int idClick = inventaryClick(sx, sy);
+		if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
+			if (!showDinamicInterface){
+				if (idClick >= 0 && idClick < 10){
+					inventary->setActiveItem(idClick);
+					activeItem = idClick;
 				}
-				
+				else{
+					player->setAtacking();
+					player->upgareAngleWeapon();
+				}
 			}
-			if (mouse && idMovingItem != -1)inventary->moveItem(idMovingItem, sx - 16, SCREEN_HEIGHT - sy - 16);
-		}
-	}
-	//Just mouseRelease
-	else if (idMovingItem != -1){
-		if (idClick != -1){
-			if (idClick == 58) {
-				inventary->removeItem(idMovingItem);
+			//crafting
+			else if (idClick == 59 && !pressed){
+				crafting->craftItem(crafting->getIdObejctToCraft(), texProgram);
 				crafting->update();
+				pressed = true;
+				setPlayerItem(getActiveItem());
 			}
-			else inventary->swapItem(idMovingItem, idClick);
-			player->updatePlayerSet();
-			setPlayerItem(getActiveItem());
+			//Help Button
+			else if (idClick == 60){
+				Game::instance().setModeHelp();
+			}
+			//Drag and droop
+			else{
+				if (mouse && idMovingItem == -1){
+					if (idClick != -1 && idClick >= 0 && idClick < 58 && inventary->getId(idClick) != 0){
+						idMovingItem = idClick;
+						mouse = true;
+					}
+
+				}
+				if (mouse && idMovingItem != -1)inventary->moveItem(idMovingItem, sx - 16, SCREEN_HEIGHT - sy - 16);
+			}
 		}
-		idMovingItem = -1;
-	}
-	else{
-		player->unsetAtacking();
-		player->setAngleWeapon();
+		//Just mouseRelease
+		else if (idMovingItem != -1){
+			if (idClick != -1){
+				if (idClick == 58) {
+					inventary->removeItem(idMovingItem);
+					crafting->update();
+				}
+				else inventary->swapItem(idMovingItem, idClick);
+				player->updatePlayerSet();
+				setPlayerItem(getActiveItem());
+			}
+			idMovingItem = -1;
+		}
+		else{
+			player->unsetAtacking();
+			player->setAngleWeapon();
+		}
 	}
 }
 
@@ -412,7 +416,7 @@ int Scene::inventaryClick(int x, int y){
 		}
 	}
 	cont = -1;
-	//drawCraftingPosibilitys
+	//draw craftingPosibilitys
 	int increment = 31;
 	for (int i = 0; i < 5; i++){
 		if (i == 2){
@@ -423,6 +427,10 @@ int Scene::inventaryClick(int x, int y){
 				}
 			}
 		}
+	}
+	//help button
+	if (x > 16 && x < 48){
+		if (y > 16 && y < 48) res = 60;
 	}
 	return res;
 }

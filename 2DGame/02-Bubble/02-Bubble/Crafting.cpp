@@ -7,10 +7,11 @@
 Crafting::Crafting(ShaderProgram &texProgram)
 {
 	itemPointerCraft = -1;
+	spriteItem = Sprite::createSprite(glm::ivec2(32.f, 32.f), glm::vec2((32.f / (float)SPRITESHEETWIDTH), 1.f), &spriteSheetItems, &texProgram);
 	spriteSheetItems.loadFromFile("images/items.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	for (int i = 0; i < NUM_ITEMS; i++){
 		arrayCraft[i].idItem = i;
-		arrayCraft[i].spriteItem = setSprite(i, texProgram);
+		arrayCraft[i].textCord = setSprite(i);
 		arrayCraft[i].crafteable = isCrafeable(i);
 		setItemsNeeded(i);
 		if (arrayCraft[i].crafteable) itemPointerCraft = i;
@@ -52,14 +53,21 @@ void Crafting::render(){
 		int pointer = setPointer(itemPointerCraft);
 		for (int i = 0; i < 5; i++){
 			if (itemPointerCraft != -1){
-				arrayCraft[pointer].spriteItem->setPosition(glm::vec2(float(posXcraftBasic), float(posYcraftBasic - 35 * i)));
-				arrayCraft[pointer].spriteItem->render(3.1415);
+				//arrayCraft[pointer].spriteItem->setPosition(glm::vec2(float(posXcraftBasic), float(posYcraftBasic - 35 * i)));
+				//arrayCraft[pointer].spriteItem->render(3.1415);
+				spriteItem->setPosition(glm::vec2(float(posXcraftBasic), float(posYcraftBasic - 35 * i)));
+				spriteItem->setTextCord(arrayCraft[pointer].textCord);
+				spriteItem->render(3.1415);
 			}
 			// items necesaris per crafetejar
 			if (i == 2){
 				for (int i2 = 0; i2 < 3 && arrayCraft[pointer].itemsNeedId[i2] != -1; i2++){
-					arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].spriteItem->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 35), float(posYcraftBasic - 35 * i)));
-					arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].spriteItem->render(3.1415);
+					//arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].spriteItem->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 35), float(posYcraftBasic - 35 * i)));
+					//arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].spriteItem->render(3.1415);
+					spriteItem->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 35), float(posYcraftBasic - 35 * i)));
+					spriteItem->setTextCord(arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].textCord);
+					spriteItem->render(3.1415);
+
 					}
 			}
 			pointer = nextPointer(pointer);
@@ -158,7 +166,7 @@ bool Crafting::isCrafeable(int idItem){
 }
 
 int Crafting::getIdObejctToCraft(){
-	if (itemPointerCraft == -1) return itemPointerCraft;
+	if (itemPointerCraft == -1) return -1;
 	else return arrayCraft[itemPointerCraft].idItem;
 }
 
@@ -346,103 +354,103 @@ void Crafting::craftItem(int idItem, ShaderProgram &texProgram){
 #define HEARTH_RING 23
 */
 
-Sprite *Crafting::setSprite(int idSprite, ShaderProgram &texProgram){
-	Sprite *item;
-	item = Sprite::createSprite(glm::ivec2(32.f, 32.f), glm::vec2((32.f / (float)SPRITESHEETWIDTH), 1.f), &spriteSheetItems, &texProgram);
+glm::vec2 Crafting::setSprite(int idSprite){
+	glm::vec2 textCord(0.f,0.f);
 	float movmentTextCord = (32.f / (float)SPRITESHEETWIDTH);
 	switch (idSprite){
 	case PICK:
-		return item;
+		return textCord;
 		break;
 	case WOODEN_SWORD:
-		item->setTextCord(glm::vec2((movmentTextCord * (WOODEN_SWORD - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (WOODEN_SWORD - 1)), 0.f));
+		return textCord;
 		break;
 	case WOOD:
-		item->setTextCord(glm::vec2((movmentTextCord * (WOOD - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (WOOD - 1)), 0.f));
+		return textCord;
 		break;
 	case IRON_SWORD:
-		item->setTextCord(glm::vec2((movmentTextCord * (IRON_SWORD - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (IRON_SWORD - 1)), 0.f));
+		return textCord;
 		break;
 	case DIAMOND_BAR:
-		item->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_BAR - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (DIAMOND_BAR - 1)), 0.f));
+		return textCord;
 		break;
 	case GOLD_BAR:
-		item->setTextCord(glm::vec2((movmentTextCord * (GOLD_BAR - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (GOLD_BAR - 1)), 0.f));
+		return textCord;
 		break;
 	case BRONZE_BAR:
-		item->setTextCord(glm::vec2((movmentTextCord * (BRONZE_BAR - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (BRONZE_BAR - 1)), 0.f));
+		return textCord;
 		break;
 	case IRON_BAR:
-		item->setTextCord(glm::vec2((movmentTextCord * (IRON_BAR - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (IRON_BAR - 1)), 0.f));
+		return textCord;
 		break;
 	case FLY_BOOTS:
-		item->setTextCord(glm::vec2((movmentTextCord * (FLY_BOOTS - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (FLY_BOOTS - 1)), 0.f));
+		return textCord;
 		break;
 	case DIAMOND_SWORD:
-		item->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_SWORD - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (DIAMOND_SWORD - 1)), 0.f));
+		return textCord;
 		break;
 	case BRONZE_BOOTS:
-		item->setTextCord(glm::vec2((movmentTextCord * (BRONZE_BOOTS - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (BRONZE_BOOTS - 1)), 0.f));
+		return textCord;
 		break;
 	case IRON_BOOTS:
-		item->setTextCord(glm::vec2((movmentTextCord * (IRON_BOOTS - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (IRON_BOOTS - 1)), 0.f));
+		return textCord;
 		break;
 	case DIAMOND_BOOTS:
-		item->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_BOOTS - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (DIAMOND_BOOTS - 1)), 0.f));
+		return textCord;
 		break;
 	case GOLD_BOOTS:
-		item->setTextCord(glm::vec2((movmentTextCord * (GOLD_BOOTS - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (GOLD_BOOTS - 1)), 0.f));
+		return textCord;
 		break;
 	case BRONZE_ARMOR:
-		item->setTextCord(glm::vec2((movmentTextCord * (BRONZE_ARMOR - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (BRONZE_ARMOR - 1)), 0.f));
+		return textCord;
 		break;
 	case IRON_ARMOR:
-		item->setTextCord(glm::vec2((movmentTextCord * (IRON_ARMOR - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (IRON_ARMOR - 1)), 0.f));
+		return textCord;
 		break;
 	case DIAMOND_ARMOR:
-		item->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_ARMOR - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (DIAMOND_ARMOR - 1)), 0.f));
+		return textCord;
 		break;
 	case GOLD_ARMOR:
-		item->setTextCord(glm::vec2((movmentTextCord * (GOLD_ARMOR - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (GOLD_ARMOR - 1)), 0.f));
+		return textCord;
 		break;
 	case BRONZE_HELMET:
-		item->setTextCord(glm::vec2((movmentTextCord * (BRONZE_HELMET - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (BRONZE_HELMET - 1)), 0.f));
+		return textCord;
 		break;
 	case IRON_HELMET:
-		item->setTextCord(glm::vec2((movmentTextCord * (IRON_HELMET - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (IRON_HELMET - 1)), 0.f));
+		return textCord;
 		break;
 	case DIAMOND_HELMET:
-		item->setTextCord(glm::vec2((movmentTextCord * (DIAMOND_HELMET - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (DIAMOND_HELMET - 1)), 0.f));
+		return textCord;
 		break;
 	case GOLD_HELMET:
-		item->setTextCord(glm::vec2((movmentTextCord * (GOLD_HELMET - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (GOLD_HELMET - 1)), 0.f));
+		return textCord;
 		break;
 	case HEARTH_RING:
-		item->setTextCord(glm::vec2((movmentTextCord * (HEARTH_RING - 1)), 0.f));
-		return item;
+		textCord = (glm::vec2((movmentTextCord * (HEARTH_RING - 1)), 0.f));
+		return textCord;
 		break;
 	default:
+		return textCord;
 		break;
 	}
 }

@@ -10,9 +10,10 @@ void Game::init()
 	glClearColor(0.4f, 0.0f, 0.9f, 0.3f);
 	
 	mainMenu.init();
-	snake.init();
+	help.init();
+	deathMenu.init();
+	winGame.init();
 	screen = MAINMENU;
-	//screen = GAME;
 }
 
 bool Game::update(int deltaTime)
@@ -26,6 +27,15 @@ bool Game::update(int deltaTime)
 		break;
 	case SNAKE:
 		snake.update(deltaTime);
+		break;
+	case HELP:
+		help.update(deltaTime);
+		break;
+	case DEATH:
+		deathMenu.update(deltaTime);
+		break;
+	case WIN:
+		winGame.update(deltaTime);
 		break;
 	}
 	return bPlay;
@@ -43,6 +53,18 @@ void Game::render()
 			break;
 		case SNAKE:
 			snake.render();
+			break;
+		case HELP:
+			help.render();
+			break;
+		case DEATH:
+			deathMenu.render();
+			break;
+		case WIN:
+			winGame.render();
+			break;
+		default:
+			break;
 	}
 }
 
@@ -167,11 +189,30 @@ void Game::setPlayerItem(int idItem, Sprite * sprite){
 	scene.player->setActiveItem(idItem);
 }
 
+void Game::setModeGameWithOutInit(){
+	screen = GAME;
+}
+
 void Game::setModeGame(){
 	scene.init();
 	screen = GAME;
 }
 
+void Game::setModeHelp(){
+	screen = HELP;
+}
 void Game::setModeSnake(){
+	snake.init();
 	screen = SNAKE;
+}
+
+void Game::setModeDeath(){
+	screen = DEATH;
+}
+void Game::setModeMenu(){
+	screen = MAINMENU;
+}
+
+void Game::setModeWin(){
+	screen = WIN;
 }
