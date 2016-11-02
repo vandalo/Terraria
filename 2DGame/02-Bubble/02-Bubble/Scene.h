@@ -42,6 +42,7 @@ public:
 	ShaderProgram getShaderProgram(){ return texProgram; };
 	int getActiveItem(){ return activeItem; };
 	Inventary* getInventary(){ return inventary; };
+	Crafting* getCrafting(){ return crafting; };
 
 private:
 	void initShaders();
@@ -54,6 +55,7 @@ private:
 	
 
 private:
+	double wx, wy;
 	StaticInterface *staticInterface;
 	DinamicInterface *dinamicInterface;
 	Crafting *crafting;

@@ -159,6 +159,9 @@ bool Crafting::isCrafeable(int idItem){
 			Game::instance().getScene()->getInventary()->hasItem(GOLD_BAR, 1) &&
 			Game::instance().getScene()->getInventary()->hasItem(DIAMOND_BAR, 1);
 		break;
+	case IRON_BAR:
+		return Game::instance().getScene()->getInventary()->hasItem(BRONZE_BAR, 2);
+		break;
 	default:
 		return false;
 		break;
@@ -542,6 +545,11 @@ void Crafting::setItemsNeeded(int i){
 		arrayCraft[i].itemsNeedId[0] = DIAMOND_BAR;
 		arrayCraft[i].itemsNeedId[1] = GOLD_BAR;
 		arrayCraft[i].itemsNeedId[2] = IRON_BAR;
+		break;
+	case IRON_BAR:
+		arrayCraft[i].itemsNeedId[0] = BRONZE_BAR;
+		arrayCraft[i].itemsNeedId[1] = BRONZE_BAR;
+		arrayCraft[i].itemsNeedId[2] = -1;
 		break;
 	default:
 		arrayCraft[i].itemsNeedId[0] = -1;

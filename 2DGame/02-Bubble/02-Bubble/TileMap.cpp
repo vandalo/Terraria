@@ -3,6 +3,8 @@
 #include <sstream>
 #include <vector>
 #include "TileMap.h"
+#include "Define.h"
+#include "Game.h"
 
 
 using namespace std;
@@ -88,17 +90,15 @@ bool TileMap::loadLevel(const string &levelFile)
 			fin.get(tile);
 			if (tile == ' '){
 				map[j*mapSize.x + i].id = 0;
-				//cout << 0 << " ";
 			}
 			else{
 				map[j*mapSize.x + i].id = tile - int('0');
-				//cout << tile - int('0') << " ";
+				if (map[j*mapSize.x + i].id != 0);
 			}
 			map[j*mapSize.x + i].vertexIndex = -1;
-			map[j*mapSize.x + i].vida = 1;
+			map[j*mapSize.x + i].vida = 50;
 
 		}
-		//cout << endl;
 		fin.get(tile);
 #ifndef _WIN32
 		fin.get(tile);
@@ -147,21 +147,61 @@ void TileMap::setWorldTile(int id, double x, double y) {
 void TileMap::setTile(int id, int x, int y, bool redraw) {
 	int index = y * mapSize.x + x;
 	//("Index: %d\n", index);
-
+	int idaux = map[index].id;
 	Tile *t = &map[index];
 
 	if (t->vertexIndex != -1) {
-		for (size_t i = 0; i < mapSize.x * mapSize.y; i++) {
-			if (map[i].vertexIndex > t->vertexIndex) {
-				map[i].vertexIndex -= 24;
-			}
+		if (t->vida > 0){
+			t->vida--;
 		}
+		else{
+			//Tree TODO
+			
 
-		vector<float>::iterator start = vertices.begin() + t->vertexIndex;
-		vector<float>::iterator end = start + 24;
-		vertices.erase(start, end);
-		t->vertexIndex = -1;
-		nTiles--;
+			//Fer aixo x afegir les fustes
+			/*for (int i = 0; i < 3; i++)
+				Game::instance().getScene()->getInventary()->putItem(WOOD, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+			Game::instance().getScene()->getCrafting()->update();
+			Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());*/
+
+			switch (t->id){
+			case TILE_GOLD1:
+			case TILE_GOLD2:
+				Game::instance().getScene()->getInventary()->putItem(GOLD_BAR, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+				Game::instance().getScene()->getCrafting()->update();
+				Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
+				break;
+			case TILE_BRONZE1:
+			case TILE_BRONZE2:
+				Game::instance().getScene()->getInventary()->putItem(BRONZE_BAR, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+				Game::instance().getScene()->getCrafting()->update();
+				Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
+				break;
+			case TILE_DIAMOND1:
+			case TILE_DIAMOND2:
+				Game::instance().getScene()->getInventary()->putItem(TILE_DIAMOND1, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+				Game::instance().getScene()->getCrafting()->update();
+				Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
+				break;
+			default:
+				cout << "TILE ARBRE " << t->id << endl;
+				break;
+			}
+
+			for (size_t i = 0; i < mapSize.x * mapSize.y; i++) {
+				if (map[i].vertexIndex > t->vertexIndex) {
+					map[i].vertexIndex -= 24;
+				}
+			}
+
+			vector<float>::iterator start = vertices.begin() + t->vertexIndex;
+			vector<float>::iterator end = start + 24;
+			vertices.erase(start, end);
+			t->vertexIndex = -1;
+			nTiles--;
+			
+			t->id = id;
+		}
 	}
 
 
@@ -192,7 +232,7 @@ void TileMap::setTile(int id, int x, int y, bool redraw) {
 		vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[1].y);
 	}
 
-	t->id = id;
+	
 
 	if (redraw) {
 		setBufferData();

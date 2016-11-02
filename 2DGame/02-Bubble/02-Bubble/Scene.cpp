@@ -115,10 +115,13 @@ void Scene::update(int deltaTime)
 		}
 		eyeBoss->update(deltaTime);
 		staticInterface->update(deltaTime);
-		//dinamicInterface->update(deltaTime);
 
 		int sx, sy;
 		Game::instance().getScreenMousePos(&sx, &sy);
+		if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON) && player->getActiveItem() == PICK){
+			Game::instance().getWorldMousePos(&wx, &wy, player->getX() - SCREEN_WIDTH / 2, player->getY() - SCREEN_HEIGHT / 2);
+			map->setWorldTile(0, wx, wy);
+		}
 		int idClick = inventaryClick(sx, sy);
 		if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
 			if (!showDinamicInterface){

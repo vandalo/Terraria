@@ -142,13 +142,13 @@ void Game::getWorldMousePos(double * x, double * y, double left, double bottom) 
 	
 
 
-	printf("Mouse Coords: %d, %d \n", mouse.x, mouse.y);
+	//printf("Mouse Coords: %d, %d \n", mouse.x, mouse.y);
 
-	printf("Left, Bottom: %f, %f\n", left, bottom);
+	//printf("Left, Bottom: %f, %f\n", left, bottom);
 
 	int inverseY = SCREEN_HEIGHT - mouse.y;
 
-	printf("Corrected Y axis, mouse Coords : %d, %d \n", mouse.x, inverseY);
+	//printf("Corrected Y axis, mouse Coords : %d, %d \n", mouse.x, inverseY);
 
 	double worldX = left + mouse.x;
 	double worldY = bottom + mouse.y;

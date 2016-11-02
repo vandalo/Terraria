@@ -23,6 +23,14 @@
 
 #define LIFE 10
 
+#define TILE_IRON 9
+#define TILE_GOLD1 10
+#define TILE_GOLD2 11
+#define TILE_DIAMOND1 12
+#define TILE_DIAMOND2 13
+#define TILE_BRONZE1 14
+#define TILE_BRONZE2 15
+
 #define NUM_ITEMS 24
 
 #define PICK 1
