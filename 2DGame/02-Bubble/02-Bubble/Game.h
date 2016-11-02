@@ -4,6 +4,7 @@
 
 #include "Scene.h"
 #include "MainMenu.h"
+#include "Snake.h"
 
 
 #define SCREEN_WIDTH 1024
@@ -53,6 +54,7 @@ public:
 	void getWorldMousePos(double * x, double * y, double left, double bottom);
 	bool isMousePressed(int button);
 	void setModeGame();
+	void setModeSnake();
 	void setPlayerItem(int idItem, Sprite* sprite);
 	int getMovingItem(){ return scene.getMovingItem(); };
 	ShaderProgram getShaderProgram(){ return scene.getShaderProgram(); };
@@ -62,15 +64,17 @@ public:
 	glm::vec2 getPlayerPos();
 	int getPlayerLife();
 	int getPlayerMaxLife();
+	int getFood(){ return snake.getFood(); };
 
 private:
 	enum sceneStates
 	{
-		MAINMENU, GAME, CREDITS, HELP
+		MAINMENU, GAME, CREDITS, HELP, SNAKE
 	};
 
 	bool bPlay;                       // Continue to play game?
 	sceneStates screen;				  //wich screen we mush show
+	Snake snake;					  //Easter Egg snake
 	Scene scene;                      // Scene to render
 	MainMenu mainMenu;			      // Main menu to render
 	bool keys[256], specialKeys[256]; // Store key states so that 

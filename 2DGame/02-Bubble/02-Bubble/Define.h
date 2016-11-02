@@ -1,8 +1,11 @@
-#define SIZE_INVENTARY 50
-#define SPRITESHEETWIDTH 512
+#define SIZE_INVENTARY 58
+#define SIZE_SET 8
+#define SPRITESHEETWIDTH 1024
+#define REGENERATION_LIFE_RATE 4500
+#define NUM_MONSTERS 50
 
 
-#define posXheart (SCREEN_WIDTH - 180)
+#define posXheart (SCREEN_WIDTH - 200)
 #define posYheart (SCREEN_HEIGHT - 32)
 #define posX10objectsInventary 16
 #define posY10objectsInventary (SCREEN_HEIGHT - 50)
@@ -18,8 +21,30 @@
 #define posXobjectsNeed (16 + 4 + 35)
 #define posYobjectsNeed (SCREEN_HEIGHT / 3 + 24)
 
-#define NUM_ITEMS 4
+#define LIFE 10
+
+#define NUM_ITEMS 24
 
 #define PICK 1
 #define WOODEN_SWORD 2
 #define WOOD 3
+#define IRON_SWORD 4
+#define DIAMOND_BAR 5
+#define GOLD_BAR 6
+#define BRONZE_BAR 7
+#define IRON_BAR 8
+#define FLY_BOOTS 9
+#define DIAMOND_SWORD 10
+#define BRONZE_BOOTS 11
+#define IRON_BOOTS 12
+#define DIAMOND_BOOTS 13
+#define GOLD_BOOTS 14
+#define BRONZE_ARMOR 15
+#define IRON_ARMOR 16
+#define DIAMOND_ARMOR 17
+#define GOLD_ARMOR 18
+#define BRONZE_HELMET 19
+#define IRON_HELMET 20
+#define DIAMOND_HELMET 21
+#define GOLD_HELMET 22
+#define HEARTH_RING 23

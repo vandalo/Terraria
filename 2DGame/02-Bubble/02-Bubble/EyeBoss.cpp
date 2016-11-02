@@ -13,16 +13,31 @@
 
 enum EyeBossAnims
 {
-	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT
+	STAND_ONE, ATACK_ONE, STAND_TWO, ATACK_TWO
 };
 
 
 void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 {
 	//Creem els sprites necesaris
-	spritesheet.loadFromFile("images/NPC_126.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(glm::ivec2(110, 135), glm::vec2(.43, .08), &spritesheet, &shaderProgram);
-	//sprite = Sprite::createSprite(glm::ivec2(36, 36), glm::vec2(.25, .25), &spritesheet, &shaderProgram);
+	spritesheet.loadFromFile("images/eye_1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	sprite = Sprite::createSprite(glm::ivec2(110, 161), glm::vec2(.107, .63), &spritesheet, &shaderProgram);
+	sprite->setNumberAnimations(4);
+
+	sprite->setAnimationSpeed(STAND_ONE, 4);
+	sprite->addKeyframe(STAND_ONE, glm::vec2(0.f, 0.f));
+	sprite->addKeyframe(STAND_ONE, glm::vec2(.107f, 0.f));
+
+	sprite->setAnimationSpeed(ATACK_ONE, 8);
+	sprite->addKeyframe(ATACK_ONE, glm::vec2(.214f, 0.f));
+
+	sprite->setAnimationSpeed(STAND_TWO, 4);
+	sprite->addKeyframe(STAND_TWO, glm::vec2(.321f, 0.f));
+	sprite->addKeyframe(STAND_TWO, glm::vec2(.428f, 0.f));
+
+	sprite->setAnimationSpeed(ATACK_TWO, 8);
+	sprite->addKeyframe(ATACK_TWO, glm::vec2(.535f, 0.f));
+
 	modo = 0;
 	numAtack = 0;
 	numPersecusio = 0;
@@ -31,55 +46,69 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	patrullar = true;
 	estat = 1;
 	angle = 0;
+	vida = 20;
 	playerXanterior = Game::instance().getPlayerPos().x;
 
 	tileMapDispl = tileMapPos;
 	velocitat = 10;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posEyeBoss.x), float(tileMapDispl.y + posEyeBoss.y)));
+	sprite->changeAnimation(0);
 
 }
 
 void EyeBoss::update(int deltaTime)
 {
-	sprite->update(deltaTime);
-	angle += deltaTime;
-	glm::vec2 playerPos = Game::instance().getPlayerPos();
-	float direccioAtackXAux = (playerPos.x - posEyeBoss.x);
-	float direccioAtackYAux = (playerPos.y - posEyeBoss.y);
+	if (vida > 0){
+		sprite->update(deltaTime);
+		angle += deltaTime;
+		glm::vec2 playerPos = Game::instance().getPlayerPos();
+		float direccioAtackXAux = (playerPos.x - posEyeBoss.x);
+		float direccioAtackYAux = (playerPos.y - posEyeBoss.y);
 
-	float dirModul = sqrt(pow(direccioAtackXAux, 2) + pow(direccioAtackYAux, 2));
-	float direccioAux = direccioAtackXAux / dirModul;
-	rotateSprite = -sin(direccioAux);
-	if (direccioAtackYAux < 0) {
-		rotateSprite =  -rotateSprite + M_PI;
-	}
-	//Moviment per default, patrulla fins que te el player aprop
-	int deltaXPlayer = playerPos.x - playerXanterior;
-	playerXanterior = playerPos.x;
-	if (modo == 0){
-		float dist = getDistanciaEixX(playerPos, posEyeBoss);
-		if ((dist < 150 && abs(playerPos.x - posEyeBoss.x) < 36) || !patrullar) modo++;
-		else doPatrullar(angle);
-	}
-	//Ja ha detectat el player, i te mes del X% de la vida
-	else if (modo == 1){
-		xInicial += deltaXPlayer;
-		if (patrullar){
-			doPatrullar(angle);
-			deltaXPlayer = 0;
+		float dirModul = sqrt(pow(direccioAtackXAux, 2) + pow(direccioAtackYAux, 2));
+		float direccioAux = direccioAtackXAux / dirModul;
+		rotateSprite = -sin(direccioAux);
+		if (direccioAtackYAux < 0) {
+			rotateSprite = -rotateSprite + M_PI;
 		}
-		else if (numAtack < 3)
-			doAtack1();
-		else doRecuperaPoiscio();
-	}
+		colisionPlayer();
+		//Moviment per default, patrulla fins que te el player aprop
+		int deltaXPlayer = playerPos.x - playerXanterior;
+		playerXanterior = playerPos.x;
+		if (modo == 0){
+			float dist = getDistanciaEixX(playerPos, posEyeBoss);
+			if ((dist < 150 && abs(playerPos.x - posEyeBoss.x) < 36) || !patrullar) modo++;
+			else doPatrullar(angle);
+		}
+		//Ja ha detectat el player, i te mes del X% de la vida
+		else if (modo == 1){
+			xInicial += deltaXPlayer;
+			if (patrullar){
+				doPatrullar(angle);
+				deltaXPlayer = 0;
+			}
+			else if (numAtack < 3){
+				doAtack1();
+				if (vida < 6)
+					sprite->changeAnimation(3);
+				else sprite->changeAnimation(1);
+			}
+			else {
+				doRecuperaPoiscio();
+				if (vida < 6)
+					sprite->changeAnimation(2);
+				else sprite->changeAnimation(0);
+			}
+		}
 
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posEyeBoss.x), float(tileMapDispl.y + posEyeBoss.y)));
-	
+		sprite->setPosition(glm::vec2(float(tileMapDispl.x + posEyeBoss.x), float(tileMapDispl.y + posEyeBoss.y)));
+	}
 }
 
 void EyeBoss::render()
 {
-	sprite->render(rotateSprite);
+	if (vida > 0)
+		sprite->render(rotateSprite);
 }
 
 void EyeBoss::setTileMap(TileMap *tileMap)
@@ -195,3 +224,95 @@ float EyeBoss::getDistanciaEixX(glm::vec2 posPlayer, glm::vec2 posEyeBoss){
 }
 
 
+bool EyeBoss::colision(){
+	glm::vec2 playerBoxMin = Game::instance().getScene()->player->getBoundingBoxMin();
+	glm::vec2 playerBoxMax = Game::instance().getScene()->player->getBoundingBoxMax();
+	glm::vec2 EyeBossBoxMin = getBoundingBoxMin();
+	glm::vec2 EyeBossBoxMax = getBoundingBoxMax();
+	bool res = false;
+	if (playerBoxMin.x < EyeBossBoxMax.x && EyeBossBoxMin.x < playerBoxMax.x){
+		if (playerBoxMin.y < EyeBossBoxMax.y && EyeBossBoxMin.y < playerBoxMax.y){
+			res = true;
+		}
+	}
+	return res;
+}
+
+bool EyeBoss::colisionWeapon(){
+	glm::vec2 weaponBoxMin = Game::instance().getScene()->player->getBoundingBoxMin();
+	glm::vec2 weaponBoxMax = Game::instance().getScene()->player->getBoundingBoxMax();
+	glm::vec2 EyeBossBoxMin = getBoundingBoxMin();
+	glm::vec2 EyeBossBoxMax = getBoundingBoxMax();
+	bool res = false;
+	float increment;
+	bool dreta = Game::instance().getScene()->player->getAnimation() == 1 || Game::instance().getScene()->player->getAnimation() == 3;
+	if (dreta) {
+		weaponBoxMax.x += 16;
+		weaponBoxMin.x += 16;
+	}
+	else{
+		weaponBoxMin.x -= 16;
+		weaponBoxMax.x -= 16;
+	}
+	if (weaponBoxMin.x < EyeBossBoxMax.x && EyeBossBoxMin.x < weaponBoxMax.x){
+		if (weaponBoxMin.y < EyeBossBoxMax.y && EyeBossBoxMin.y < weaponBoxMax.y){
+			res = true;
+		}
+	}
+	return res;
+}
+
+void EyeBoss::colisionPlayer(){
+	if (Game::instance().getScene()->player->isAtacking()){
+		if (colisionWeapon()){
+			//esquerra
+			if (Game::instance().getScene()->getPlayerPos().x > posEyeBoss.x){
+				setPosition(glm::vec2(posEyeBoss.x - 40., posEyeBoss.y - 20));
+				if (map->collisionMoveRight(Game::instance().getScene()->getPlayerPos(), glm::ivec2(32, 32)))
+				{
+					setPosition(glm::vec2(posEyeBoss.x + 40., posEyeBoss.y + 20));
+				}
+			}
+			//dreata
+			else{
+				setPosition(glm::vec2(posEyeBoss.x + 40., posEyeBoss.y - 20));
+				if (map->collisionMoveLeft(Game::instance().getScene()->getPlayerPos(), glm::ivec2(32, 32)))
+				{
+					setPosition(glm::vec2(posEyeBoss.x - 40., posEyeBoss.y + 20));
+				}
+			}
+			vida -= Game::instance().getScene()->player->getAtack();
+		}
+	}
+	//else{
+	if (colision()){
+		//esquerra
+		if (Game::instance().getScene()->getPlayerPos().x > posEyeBoss.x){
+			Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX() + 40., Game::instance().getScene()->player->getY() - 20));
+			if (map->collisionMoveRight(Game::instance().getScene()->getPlayerPos(), glm::ivec2(32, 32)))
+			{
+				Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX() - 40., Game::instance().getScene()->player->getY() + 20));
+			}
+		}
+		//dreata
+		else{
+			Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX() - 40., Game::instance().getScene()->player->getY() - 20));
+			if (map->collisionMoveLeft(Game::instance().getScene()->getPlayerPos(), glm::ivec2(32, 32)))
+			{
+				Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX() + 40., Game::instance().getScene()->player->getY() + 20));
+			}
+		}
+		Game::instance().getScene()->player->updateLife(-1);
+	}
+	//}
+}
+
+glm::vec2 EyeBoss::getBoundingBoxMin(){
+	glm::vec2 mins = glm::vec2(posEyeBoss.x - sprite->getSpriteSize().x / 2, posEyeBoss.y - sprite->getSpriteSize().y / 2);
+	return mins;
+}
+
+glm::vec2 EyeBoss::getBoundingBoxMax(){
+	glm::vec2 maxs = glm::vec2(posEyeBoss.x + sprite->getSpriteSize().x / 2, posEyeBoss.y + sprite->getSpriteSize().y / 2);
+	return maxs;
+}

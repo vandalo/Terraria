@@ -26,12 +26,25 @@ public:
 	int getMaxLife();
 	void setWeaponSprite(Sprite * weapon);
 	void setActiveItem(int idItem);
+	int getActiveItem(){ return activeItem; };
+	void upgareAngleWeapon();
+	void setAngleWeapon();
+	void setAtacking();
+	void unsetAtacking();
+	bool isAtacking(){ return atacking; };
+	glm::vec2 getBoundingBoxMin();
+	glm::vec2 getBoundingBoxMax();
+	int getAnimation(){ return sprite->animation(); };
+	void updateLife(int diff);
+	int getAtack(){ return atack; };
+	void updatePlayerSet();
 	
 private:
 
-
+	int regenVida;
 	int life, maxLife;
-	bool bJumping;
+	int atack;
+	bool bJumping, atacking, isFlying, canFly;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int jumpAngle, startY;
 	Texture spritesheet;
@@ -39,6 +52,8 @@ private:
 	Sprite *weaponSprite;
 	TileMap *map;
 	int activeItem;
+	float angleWeapon;
+
 
 };
 

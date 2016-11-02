@@ -19,16 +19,18 @@ enum DinamicInterfaceAnims
 
 void DinamicInterface::init(ShaderProgram &shaderProgram)
 {
-	spritesheetInventary.loadFromFile("images/Inventory_Back12.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheetInventary.loadFromFile("images/Inventory.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheetInventarySmall.loadFromFile("images/Inventory_Back12_small.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	spriteBackObjects = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(1., 1.), &spritesheetInventary, &shaderProgram);
-	spriteBackSet = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(1., 1.), &spritesheetInventary, &shaderProgram);
-	spriteBackChest = Sprite::createSprite(glm::ivec2(28, 28), glm::vec2(1., 1.), &spritesheetInventary, &shaderProgram);
-	spritePossibleCraft = Sprite::createSprite(glm::ivec2(28, 28), glm::vec2(1., 1.), &spritesheetInventary, &shaderProgram);
-	spriteObjectCraft = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(1., 1.), &spritesheetInventary, &shaderProgram);
-	rubish = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(1., 1.), &spritesheetInventary, &shaderProgram);
+	spriteBackObjects = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
+	spriteBackSet = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
+	spriteBackSet->setTextCord(glm::vec2(.375,0));
+	spriteObjectCraft = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
+	spriteCraftingActive = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
+	spriteCraftingActive->setTextCord(glm::vec2(0.25, 0.));
+	rubish = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
+	rubish->setTextCord(glm::vec2(.125*4,0.f));
+	spriteSetGuide = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(.125, 1.), &spritesheetInventary, &shaderProgram);
 
-	//Poiscions de la interficie
 
 	//16 = distancia de marge, 35 distancia de linventari superior, 4 diferencia entre 35-31
 	posXrubish;
@@ -79,11 +81,25 @@ void DinamicInterface::render(bool chest)
 				spriteBackObjects->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 35), float(posYcraftBasic - 35 * i)));
 				spriteBackObjects->render();
 			}
+			spriteCraftingActive->setPosition(glm::vec2(float(posXcraftBasic), float(posYcraftBasic - 35 * i)));
+			spriteCraftingActive->render();
 		}
-		spriteObjectCraft->render();
+		else spriteObjectCraft->render();
 	}
+	spriteBackObjects->setPosition(glm::vec2(float(posXrubish), float(posYrubish)));
+	spriteBackObjects->render();
 	rubish->setPosition(glm::vec2(float(posXrubish), float(posYrubish)));
-	rubish->render();
+	rubish->render(3.1415);
+
+	//Pintem siluetes de on ha d'anar cada part del set
+	float movmentTextCord = (32.f / (float)256.);
+	for (int i = 50; i < 53; i++){
+		spriteSetGuide->setPosition(glm::vec2(float(posXset) - 35, float(posYset - ((i - 50) * 35))));
+		if(i == 50)spriteSetGuide->setTextCord(glm::vec2((movmentTextCord * 6), 0.f));
+		else if (i == 51)spriteSetGuide->setTextCord(glm::vec2((movmentTextCord * 5), 0.f));
+		else spriteSetGuide->setTextCord(glm::vec2((movmentTextCord * 7), 0.f));
+		spriteSetGuide->render(-3.1416);
+	}
 }
 
 void DinamicInterface::setTileMap(TileMap *tileMap)

@@ -34,6 +34,11 @@ public:
 	void doAtack1();
 	void doRecuperaPoiscio();
 	float getDistanciaEixX(glm::vec2 posPlayer, glm::vec2 posEyeBoss);
+	void colisionPlayer();
+	glm::vec2 getBoundingBoxMin();
+	glm::vec2 getBoundingBoxMax();
+	bool colision();
+	bool colisionWeapon();
 
 private:
 	int playerXanterior;

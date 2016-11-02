@@ -9,6 +9,8 @@
 
 #define SCREEN_X 32
 #define SCREEN_Y 16
+#define SPACEBAR 32
+
 
 #define INIT_PLAYER_X_TILES 4
 #define INIT_PLAYER_Y_TILES 25
@@ -43,13 +45,12 @@ void MainMenu::update(int deltaTime)
 	
 	int sx, sy;
 	double wx, wy;
+	if (Game::instance().getKey(SPACEBAR)){
+		Game::instance().setModeSnake();
+	}
 	if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
 		Game::instance().getScreenMousePos(&sx, &sy);
-		//cout << "Screen (" << sx << ", " << sy << ")" << endl;
-		//Game::instance().getWorldMousePos(&wx, &wy, player-> getX(), player -> getY());
-//		cout << "World (" << wx << ", " << wy << ")" << endl;
-		//cout << endl;
-		if (sx > 200 && sx < 400 && sy > 200 && sy < 280)
+		if (sx > 395 && sx < 395+240 && sy > 270 && sy < 270+85)
 			Game::instance().setModeGame();
 	}
 }
@@ -116,35 +117,18 @@ void MainMenu::renderBackground(){
 	glEnableVertexAttribArray(texCoordLocation);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glDisable(GL_TEXTURE_2D);
-	
-	//Background2
-	/*glEnable(GL_TEXTURE_2D);
-	background2.use();
-	glBindVertexArray(vao2);
-	glEnableVertexAttribArray(posLocation2);
-	glEnableVertexAttribArray(texCoordLocation2);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glDisable(GL_TEXTURE_2D);
 
-	//Background3
-	/*glEnable(GL_TEXTURE_2D);
-	background3.use();
-	glBindVertexArray(vao3);
-	glEnableVertexAttribArray(posLocation3);
-	glEnableVertexAttribArray(texCoordLocation3);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glDisable(GL_TEXTURE_2D);*/
 }
 
 void MainMenu::initBackground(){
 
 	//carreguem textura (el background bo es el 23)
-	background.loadFromFile("images/backMenu.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	background.loadFromFile("images/backgroundMenu.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	int width = background.width();
 	int heigth = background.height();
 	//Aqui definim la geometria i les cordenades de textura
-	glm::vec2 geom[2] = { glm::vec2(0.f, 480.f), glm::vec2(640.f, 0.f) };
-	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2(640.f/width, .0f) };
+	glm::vec2 geom[2] = { glm::vec2(0.f, (float)SCREEN_HEIGHT), glm::vec2((float)SCREEN_WIDTH, 0.f) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.f, 1.f), glm::vec2((float)SCREEN_WIDTH/width, .0f) };
 
 	//Definim els 24 vertex per pintar la textura 12 per cada triangle
 	float vertices[24] = {

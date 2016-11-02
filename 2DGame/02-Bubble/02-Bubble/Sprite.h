@@ -24,7 +24,7 @@ public:
 	Sprite(const Sprite &sprite);
 
 	void update(int deltaTime);
-	void render(float rotate = 0.f) const;
+	void render(float rotate = 0.f, float dist = 0.f) const;
 	void free();
 
 	void setNumberAnimations(int nAnimations);
@@ -35,6 +35,7 @@ public:
 	
 	void setPosition(const glm::vec2 &pos);
 	void setTextCord(glm::vec2 pos);
+	glm::vec2 getSpriteSize(){ return textSize; };
 
 private:
 	Texture *texture;
