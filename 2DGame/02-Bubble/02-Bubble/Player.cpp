@@ -29,8 +29,10 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	life = LIFE;
 	maxLife = LIFE;
 	weaponSprite = NULL;
-	activeItem = 1;
+	activeItem = -1;
 	angleWeapon = -2.5;
+	weaponSpriteSheet.loadFromFile("images/items.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	weaponSprite = Sprite::createSprite(glm::ivec2(32.f, 32.f), glm::vec2((32.f / (float)SPRITESHEETWIDTH), 1.f), &weaponSpriteSheet, &shaderProgram);
 	spritesheet.loadFromFile("images/pj.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.5, 0.045), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(4);
@@ -131,7 +133,7 @@ void Player::update(int deltaTime)
 		}
 	}
 	//To FLY
-	if (Game::instance().getKey(SPACEBAR) && canFly)
+	if (Game::instance().getSpecialKey(GLUT_KEY_UP) && canFly)
 	{
 		jumpAngle = 0;
 		startY = posPlayer.y;
@@ -145,15 +147,15 @@ void Player::update(int deltaTime)
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 }
 
-void Player::setWeaponSprite(Sprite * weapon){
-	weaponSprite = weapon;
+void Player::setWeaponSprite(glm::vec2 texCord){
+	weaponSprite->setTextCord(texCord);
 }
 
 
 void Player::render()
 {
 	sprite->render();
-	if (weaponSprite != NULL){
+	if (activeItem != 0){
 		
 		if (sprite->animation() == STAND_RIGHT || sprite->animation() == MOVE_RIGHT){
 			weaponSprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x + 16), float(tileMapDispl.y + posPlayer.y + 8)));

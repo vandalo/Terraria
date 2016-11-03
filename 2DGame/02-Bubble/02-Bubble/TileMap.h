@@ -47,7 +47,7 @@ public:
 	bool collisionMoveUp(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
 
 	
-	void setWorldTile(int id, double x, double y);
+	bool setWorldTile(int id, double x, double y);
 	void setTile(int id, int x, int y, bool redraw);
 	void decreaseWorldTileLife(int x, int y, int amount);
 	void processTileDrop(int x, int y, int id);
@@ -65,7 +65,7 @@ private:
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
 	Tile * map;
-
+	bool seted;
 	int nTiles;
 	ShaderProgram program;
 	vector<float> vertices;

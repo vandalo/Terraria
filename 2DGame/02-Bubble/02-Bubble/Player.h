@@ -24,7 +24,7 @@ public:
 	void setPosition(const glm::vec2 &pos);
 	int getLife();
 	int getMaxLife();
-	void setWeaponSprite(Sprite * weapon);
+	void setWeaponSprite(glm::vec2 texCord);
 	void setActiveItem(int idItem);
 	int getActiveItem(){ return activeItem; };
 	void upgareAngleWeapon();
@@ -47,7 +47,7 @@ private:
 	bool bJumping, atacking, isFlying, canFly;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int jumpAngle, startY;
-	Texture spritesheet;
+	Texture spritesheet, weaponSpriteSheet;
 	Sprite *sprite;
 	Sprite *weaponSprite;
 	TileMap *map;

@@ -63,7 +63,7 @@ public:
 	void setModeMenu();
 	void setModeHelp();
 	void setModeWin();
-	void setPlayerItem(int idItem, Sprite* sprite);
+	void setPlayerItem(int idItem, glm::vec2 texCord);
 	int getMovingItem(){ return scene.getMovingItem(); };
 	ShaderProgram getShaderProgram(){ return scene.getShaderProgram(); };
 	bool hasObject(int idItem, int times);

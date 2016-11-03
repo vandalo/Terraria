@@ -71,8 +71,11 @@ void Game::render()
 
 void Game::keyPressed(int key)
 {
-	if(key == 27) // Escape code
-		bPlay = false;
+	if (key == 27) // Escape code
+		if (screen == MAINMENU)
+			bPlay = false;
+		else screen = MAINMENU;
+		
 	if (key == 'i' || key == 'I')
 		scene.changeModeInterface();
 	if (key == '1')
@@ -187,8 +190,8 @@ int Game::getPlayerMaxLife(){
 	return scene.getPlayerMaxLife();
 }
 
-void Game::setPlayerItem(int idItem, Sprite * sprite){
-	scene.player->setWeaponSprite(sprite);
+void Game::setPlayerItem(int idItem, glm::vec2 texCord){
+	scene.player->setWeaponSprite(texCord);
 	scene.player->setActiveItem(idItem);
 }
 

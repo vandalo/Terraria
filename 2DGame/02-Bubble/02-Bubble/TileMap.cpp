@@ -21,6 +21,7 @@ TileMap *TileMap::createTileMap(const string &levelFile, const glm::vec2 &minCoo
 TileMap::TileMap(const string &levelFile, const glm::vec2 &minCoords, ShaderProgram &program)
 {
 	loadLevel(levelFile);
+	seted = true;
 	this->vertices.reserve(mapSize.x * mapSize.y * 24);
 	this->nTiles = 0;
 	this->program = program;
@@ -42,7 +43,7 @@ void TileMap::render() const
 	glBindVertexArray(vao);
 	glEnableVertexAttribArray(posLocation);
 	glEnableVertexAttribArray(texCoordLocation);
-	glDrawArrays(GL_TRIANGLES, 0, 6 * nTiles);
+	glDrawArrays(GL_TRIANGLES, 0, 12 * nTiles);
 	glDisable(GL_TEXTURE_2D);
 }
 
@@ -97,8 +98,23 @@ bool TileMap::loadLevel(const string &levelFile)
 				if (map[j*mapSize.x + i].id != 0);
 			}
 			map[j*mapSize.x + i].vertexIndex = -1;
-			map[j*mapSize.x + i].vida = 50;
-
+			switch (map[j*mapSize.x + i].id){
+			case TILE_BRONZE1:
+			case TILE_BRONZE2:
+				map[j*mapSize.x + i].vida = 80;
+				break;
+			case TILE_GOLD1:
+			case TILE_GOLD2:
+				map[j*mapSize.x + i].vida = 100;
+				break;
+			case TILE_DIAMOND1:
+			case TILE_DIAMOND2:
+				map[j*mapSize.x + i].vida = 150;
+				break;
+			default:
+				map[j*mapSize.x + i].vida = 50;
+				break;
+			}
 		}
 		fin.get(tile);
 #ifndef _WIN32
@@ -134,52 +150,57 @@ void TileMap::prepareArrays(const glm::vec2 &minCoords)
 
 }
 
-void TileMap::setWorldTile(int id, double x, double y) {
+bool TileMap::setWorldTile(int id, double x, double y) {
 	int xIndex = (x - position.x) / tileSize;
 	int yIndex = (y - position.y) / tileSize;
 
 
 	if (xIndex < mapSize.x && yIndex < mapSize.y) {
-		setTile(id, xIndex, yIndex, true);
+		int index = yIndex * mapSize.x + xIndex;
+		int idaux = map[index].id;
+		if (map[index].id == 0){
+			setTile(id, xIndex, yIndex, true);
+			return true;
+		}
+		else return false;
 	}
 }
 
 
 void TileMap::setTile(int id, int x, int y, bool redraw) {
 	int index = y * mapSize.x + x;
-	//("Index: %d\n", index);
+
 	int idaux = map[index].id;
 	Tile *t = &map[index];
 
-	if (t->vertexIndex != -1) {
-			for (size_t i = 0; i < mapSize.x * mapSize.y; i++) {
-				if (map[i].vertexIndex > t->vertexIndex) {
-					map[i].vertexIndex -= 24;
-				}
+	if (t->vertexIndex > 0 ) {
+		for (size_t i = 0; i < mapSize.x * mapSize.y; i++) {
+
+			if (map[i].vertexIndex > t->vertexIndex && map[i].id > 0) {
+				map[i].vertexIndex -= 24;
 			}
+		}
 
-			vector<float>::iterator start = vertices.begin() + t->vertexIndex;
-			vector<float>::iterator end = start + 24;
-			vertices.erase(start, end);
-			t->vertexIndex = -1;
-			nTiles--;
-			
-			t->id = id;
-		
+		vector<float>::iterator start = vertices.begin() + t->vertexIndex;
+		vector<float>::iterator end = start + 24;
+		vertices.erase(start, end);
+		t->vertexIndex = -1;
+		nTiles--;
+		t->id = 0;
 	}
-
 
 	if (id != 0) {
 		glm::vec2 texCoordTile[2], halfTexel;
 		halfTexel = glm::vec2(0.5f / tilesheet.width(), 0.5f / tilesheet.height());
 		glm::vec2 posTile = glm::vec2(position.x + x * tileSize, position.y + y * tileSize);
-		texCoordTile[0] = glm::vec2(float((t->id - 1) % 2) / tilesheetSize.x, float((t->id - 1) / 2) / tilesheetSize.y);
+		texCoordTile[0] = glm::vec2(float((id - 1) % 2) / tilesheetSize.x, float((id - 1) / 2) / tilesheetSize.y);
 		texCoordTile[1] = texCoordTile[0] + tileTexSize;
 		//texCoordTile[0] += halfTexel;
 		texCoordTile[1] -= halfTexel;
-
-		nTiles++;
+		
 		t->vertexIndex = vertices.size();
+		t->vida = 30;
+		t->id = id;
 		// First triangle
 		vertices.push_back(posTile.x); vertices.push_back(posTile.y);
 		vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[0].y);
@@ -194,6 +215,8 @@ void TileMap::setTile(int id, int x, int y, bool redraw) {
 		vertices.push_back(texCoordTile[1].x); vertices.push_back(texCoordTile[1].y);
 		vertices.push_back(posTile.x); vertices.push_back(posTile.y + blockSize);
 		vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[1].y);
+
+		nTiles++;
 	}
 
 	
@@ -222,11 +245,9 @@ void TileMap::decreaseWorldTileLife(int wx, int wy, int amount) {
 			t->vida -= amount;
 		else
 			t->vida = 0;
-		if (t->vida == 0) {
+		if (t->vida <= 0) {
 			processTileDrop(xIndex, yIndex, t->id);
 			setTile(0, xIndex, yIndex, true);
-			
-			
 		}
 	}
 
@@ -235,7 +256,6 @@ void TileMap::decreaseWorldTileLife(int wx, int wy, int amount) {
 
 void TileMap::processTileDrop(int x, int y, int id) {
 
-	printf("processing tile drop %d, %d, %d\n", x,y, id);
 	switch (id) {
 	case TILE_GOLD1:
 	case TILE_GOLD2:
@@ -251,30 +271,20 @@ void TileMap::processTileDrop(int x, int y, int id) {
 		break;
 	case TILE_DIAMOND1:
 	case TILE_DIAMOND2:
-		Game::instance().getScene()->getInventary()->putItem(TILE_DIAMOND1, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+		Game::instance().getScene()->getInventary()->putItem(DIAMOND_BAR, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+		Game::instance().getScene()->getCrafting()->update();
+		Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
+		break;
+	case TILE_WOOD_1:
+	case TILE_WOOD_2:
+		Game::instance().getScene()->getInventary()->putItem(WOOD, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
 		Game::instance().getScene()->getCrafting()->update();
 		Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
 		break;
 	default:
-
-		if (id >= TILE_WOOD_1) {
-			for (int tx = x - 1; tx <= x + 1; tx++) {
-				int ty = y - 1;
-
-				Tile * adjTile = &map[ty * mapSize.x + tx];
-
-				if (adjTile->id >= TILE_WOOD_1) {
-					processTileDrop(tx, ty, adjTile->id);
-				}
-			}
-
-			setTile(0, x, y, true);
-			Game::instance().getScene()->getInventary()->putItem(WOOD, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
-			Game::instance().getScene()->getCrafting()->update();
-			Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
-		}
+		break;
 	}
-
+	seted = true;
 }
 
 void TileMap::setBufferData() {

@@ -60,10 +60,9 @@ void Crafting::render(){
 				spriteItem->render(3.1415);
 			}
 			// items necesaris per crafetejar
+			//TODO: PETA SI NO HI HA RES A CRAFTEJAR
 			if (i == 2){
 				for (int i2 = 0; i2 < 3 && arrayCraft[pointer].itemsNeedId[i2] != -1; i2++){
-					//arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].spriteItem->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 35), float(posYcraftBasic - 35 * i)));
-					//arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].spriteItem->render(3.1415);
 					spriteItem->setPosition(glm::vec2(float(posXobjectsNeed + i2 * 35), float(posYcraftBasic - 35 * i)));
 					spriteItem->setTextCord(arrayCraft[(arrayCraft[pointer].itemsNeedId[i2])].textCord);
 					spriteItem->render(3.1415);
@@ -231,6 +230,14 @@ void Crafting::craftItem(int idItem, ShaderProgram &texProgram){
 		for (int i = 0; i < 3; i++){
 			Game::instance().getScene()->getInventary()->removeItemNtimes(arrayCraft[DIAMOND_SWORD].itemsNeedId[i], 1);
 		}
+		if (!Game::instance().getScene()->getTheBoots()){
+			Game::instance().getScene()->getInventary()->putItem(FLY_BOOTS,
+				Game::instance().getScene()->getInventary()->getFirstEmptySlot(), texProgram);
+			Game::instance().getScene()->setTheBoots();
+			Game::instance().getScene()->setTheBoss();
+			Game::instance().getScene()->setAlert();
+
+		}
 		Game::instance().getScene()->getInventary()->putItem(DIAMOND_SWORD,
 			Game::instance().getScene()->getInventary()->getFirstEmptySlot(), texProgram);
 		break;
@@ -329,33 +336,6 @@ void Crafting::craftItem(int idItem, ShaderProgram &texProgram){
 		break;
 	}
 }
-/*
-#define PICK 1
-#define WOODEN_SWORD 2
-#define WOOD 3
-#define IRON_SWORD 4
-
-#define DIAMOND_BAR 5
-#define GOLD_BAR 6
-#define BRONZE_BAR 7
-#define IRON_BAR 8
-#define FLY_BOOTS 9
-
-#define DIAMOND_SWORD 10
-#define BRONZE_BOOTS 11
-#define IRON_BOOTS 12
-#define DIAMOND_BOOTS 13
-#define GOLD_BOOTS 14
-#define BRONZE_ARMOR 15
-#define IRON_ARMOR 16
-#define DIAMOND_ARMOR 17
-#define GOLD_ARMOR 18
-#define BRONZE_HELMET 19
-#define IRON_HELMET 20
-#define DIAMOND_HELMET 21
-#define GOLD_HELMET 22
-#define HEARTH_RING 23
-*/
 
 glm::vec2 Crafting::setSprite(int idSprite){
 	glm::vec2 textCord(0.f,0.f);

@@ -42,7 +42,8 @@ public:
 	int getLife(){ return vida; };
 
 private:
-	int playerXanterior;
+	bool colisioned;
+	int playerXanterior, playerYanterior;
 	int vida;
 	float velocitat;
 	bool atackAcavat, patrullar;
@@ -57,7 +58,7 @@ private:
 	Texture spritesheet;
 	Sprite *sprite;
 	float rotateSprite;
-
+	int maxLife;
 	TileMap *map;
 
 };

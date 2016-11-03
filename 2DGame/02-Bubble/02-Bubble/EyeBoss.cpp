@@ -37,7 +37,7 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 	sprite->setAnimationSpeed(ATACK_TWO, 8);
 	sprite->addKeyframe(ATACK_TWO, glm::vec2(.535f, 0.f));
-
+	colisioned = false;
 	modo = 0;
 	numAtack = 0;
 	numPersecusio = 0;
@@ -46,9 +46,10 @@ void EyeBoss::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	patrullar = true;
 	estat = 1;
 	angle = 0;
-	vida = 20;
+	vida = 160;
+	maxLife = vida;
 	playerXanterior = Game::instance().getPlayerPos().x;
-
+	playerYanterior = Game::instance().getPlayerPos().y;
 	tileMapDispl = tileMapPos;
 	velocitat = 10;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posEyeBoss.x), float(tileMapDispl.y + posEyeBoss.y)));
@@ -71,31 +72,36 @@ void EyeBoss::update(int deltaTime)
 		if (direccioAtackYAux < 0) {
 			rotateSprite = -rotateSprite + M_PI;
 		}
-		colisionPlayer();
+		if (!colisioned)
+			colisionPlayer();
 		//Moviment per default, patrulla fins que te el player aprop
 		int deltaXPlayer = playerPos.x - playerXanterior;
+		int deltaYPlayer = playerPos.y - playerYanterior;
+		playerYanterior = playerPos.y;
 		playerXanterior = playerPos.x;
 		if (modo == 0){
 			float dist = getDistanciaEixX(playerPos, posEyeBoss);
-			if ((dist < 150 && abs(playerPos.x - posEyeBoss.x) < 36) || !patrullar) modo++;
+			if ((dist < 400 && abs(playerPos.x - posEyeBoss.x) < 36) || !patrullar) modo++;
 			else doPatrullar(angle);
 		}
 		//Ja ha detectat el player, i te mes del X% de la vida
 		else if (modo == 1){
+			
 			xInicial += deltaXPlayer;
+			yInicial += deltaYPlayer;
 			if (patrullar){
 				doPatrullar(angle);
 				deltaXPlayer = 0;
 			}
 			else if (numAtack < 3){
 				doAtack1();
-				if (vida < 6)
+				if (vida < maxLife/2)
 					sprite->changeAnimation(3);
 				else sprite->changeAnimation(1);
 			}
 			else {
 				doRecuperaPoiscio();
-				if (vida < 6)
+				if (vida < maxLife / 2)
 					sprite->changeAnimation(2);
 				else sprite->changeAnimation(0);
 			}
@@ -187,6 +193,7 @@ void EyeBoss::doAtack1(){
 		//Moviment
 		if (abs(posEyeBoss.y - posFinalAtack.y) < 5){
 			atackAcavat = true;
+			colisioned = false;
 			numAtack++;
 			//60 FPS * 1.2 = 1.2 segons
 			delay = (60 * 1.2);
@@ -267,19 +274,19 @@ void EyeBoss::colisionPlayer(){
 		if (colisionWeapon()){
 			//esquerra
 			if (Game::instance().getScene()->getPlayerPos().x > posEyeBoss.x){
-				setPosition(glm::vec2(posEyeBoss.x - 40., posEyeBoss.y - 20));
+				/*setPosition(glm::vec2(posEyeBoss.x - 40., posEyeBoss.y - 20));
 				if (map->collisionMoveRight(Game::instance().getScene()->getPlayerPos(), glm::ivec2(32, 32)))
 				{
 					setPosition(glm::vec2(posEyeBoss.x + 40., posEyeBoss.y + 20));
-				}
+				}*/
 			}
 			//dreata
 			else{
-				setPosition(glm::vec2(posEyeBoss.x + 40., posEyeBoss.y - 20));
+				/*setPosition(glm::vec2(posEyeBoss.x + 40., posEyeBoss.y - 20));
 				if (map->collisionMoveLeft(Game::instance().getScene()->getPlayerPos(), glm::ivec2(32, 32)))
 				{
 					setPosition(glm::vec2(posEyeBoss.x - 40., posEyeBoss.y + 20));
-				}
+				}*/
 			}
 			vida -= Game::instance().getScene()->player->getAtack();
 		}
@@ -288,18 +295,18 @@ void EyeBoss::colisionPlayer(){
 	if (colision()){
 		//esquerra
 		if (Game::instance().getScene()->getPlayerPos().x > posEyeBoss.x){
-			Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX() + 40., Game::instance().getScene()->player->getY() - 20));
+			Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX(), Game::instance().getScene()->player->getY() - 40));
 			if (map->collisionMoveRight(Game::instance().getScene()->getPlayerPos(), glm::ivec2(32, 32)))
 			{
-				Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX() - 40., Game::instance().getScene()->player->getY() + 20));
+				Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX(), Game::instance().getScene()->player->getY() + 40));
 			}
 		}
 		//dreata
 		else{
-			Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX() - 40., Game::instance().getScene()->player->getY() - 20));
+			Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX(), Game::instance().getScene()->player->getY() - 40));
 			if (map->collisionMoveLeft(Game::instance().getScene()->getPlayerPos(), glm::ivec2(32, 32)))
 			{
-				Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX() + 40., Game::instance().getScene()->player->getY() + 20));
+				Game::instance().getScene()->player->setPosition(glm::vec2(Game::instance().getScene()->player->getX(), Game::instance().getScene()->player->getY() + 40));
 			}
 		}
 		Game::instance().getScene()->player->updateLife(-1);

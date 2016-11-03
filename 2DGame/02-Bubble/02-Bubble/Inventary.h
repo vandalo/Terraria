@@ -6,7 +6,7 @@
 
 struct Item {
 	int id;
-	Sprite *spriteItem;
+	glm::vec2 texCord;
 	//bool stackable;
 };
 
@@ -33,6 +33,8 @@ public:
 	void removeItemNtimes(int idItem, int times);
 
 private:
+	int xMoving, yMoving;
+	Sprite *spriteItem;
 	void render10objects();
 	void renderRestobjects();
 	void renderSet();

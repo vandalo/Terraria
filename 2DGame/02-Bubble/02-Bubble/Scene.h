@@ -43,6 +43,11 @@ public:
 	int getActiveItem(){ return activeItem; };
 	Inventary* getInventary(){ return inventary; };
 	Crafting* getCrafting(){ return crafting; };
+	float distance(glm::vec2 pos1, glm::vec2 pos2);
+	bool getTheBoots(){ return theBoots; };
+	void setTheBoots(){ theBoots = true; };
+	void setTheBoss(){ theBoss = true; };
+	void setAlert(){ alertMessage = true; };
 
 private:
 	void initShaders();
@@ -55,6 +60,8 @@ private:
 	
 
 private:
+	bool theBoss, theBoots, alertMessage;
+	float alertTime;
 	double wx, wy;
 	StaticInterface *staticInterface;
 	DinamicInterface *dinamicInterface;
@@ -72,12 +79,13 @@ private:
 	GLuint vbo, vbo2, vbo3;
 	float currentTime;
 	glm::mat4 projection, modelview;
-	Texture background, background2, background3;
+	Texture background, background2, background3, bossAlert;
 	Inventary *inventary;
 	int idMovingItem;
 	bool mouse, pressed, incremented, decremented;
 	int activeItem;
 	void initMosntersPosition();
+	Sprite * textAlert;
 	
 
 	int posXrubish, posYrubish;

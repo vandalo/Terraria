@@ -2,7 +2,7 @@
 #define SIZE_SET 8
 #define SPRITESHEETWIDTH 1024
 #define REGENERATION_LIFE_RATE 4500
-#define NUM_MONSTERS 30
+#define NUM_MONSTERS 34
 
 
 #define posXheart (SCREEN_WIDTH - 200)
@@ -33,6 +33,7 @@
 
 #define TILE_WOOD_1 17
 #define TILE_WOOD_2 18
+#define TILE_WOOD_WALL 16
 
 
 
