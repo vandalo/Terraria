@@ -31,6 +31,12 @@
 #define TILE_BRONZE1 14
 #define TILE_BRONZE2 15
 
+#define TILE_WOOD_1 17
+#define TILE_WOOD_2 18
+
+
+
+
 #define NUM_ITEMS 24
 
 #define PICK 1

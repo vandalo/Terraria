@@ -120,8 +120,14 @@ void Scene::update(int deltaTime)
 		Game::instance().getScreenMousePos(&sx, &sy);
 		if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON) && player->getActiveItem() == PICK){
 			Game::instance().getWorldMousePos(&wx, &wy, player->getX() - SCREEN_WIDTH / 2, player->getY() - SCREEN_HEIGHT / 2);
-			map->setWorldTile(0, wx, wy);
+			map->decreaseWorldTileLife(wx, wy, 1);
+			
 		}
+		else if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON) && player->getActiveItem() == WOOD) {
+			Game::instance().getWorldMousePos(&wx, &wy, player->getX() - SCREEN_WIDTH / 2, player->getY() - SCREEN_HEIGHT / 2);
+			map->setWorldTile(TILE_WOOD_1, wx, wy);
+		}
+
 		int idClick = inventaryClick(sx, sy);
 		if (Game::instance().isMousePressed(GLUT_LEFT_BUTTON)) {
 			if (!showDinamicInterface){

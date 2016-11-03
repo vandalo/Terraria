@@ -49,6 +49,8 @@ public:
 	
 	void setWorldTile(int id, double x, double y);
 	void setTile(int id, int x, int y, bool redraw);
+	void decreaseWorldTileLife(int x, int y, int amount);
+	void processTileDrop(int x, int y, int id);
 private:
 	bool loadLevel(const string &levelFile);
 	void prepareArrays(const glm::vec2 &minCoords);

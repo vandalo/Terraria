@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <algorithm>   
 #include "TileMap.h"
 #include "Define.h"
 #include "Game.h"
@@ -151,43 +152,6 @@ void TileMap::setTile(int id, int x, int y, bool redraw) {
 	Tile *t = &map[index];
 
 	if (t->vertexIndex != -1) {
-		if (t->vida > 0){
-			t->vida--;
-		}
-		else{
-			//Tree TODO
-			
-
-			//Fer aixo x afegir les fustes
-			/*for (int i = 0; i < 3; i++)
-				Game::instance().getScene()->getInventary()->putItem(WOOD, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
-			Game::instance().getScene()->getCrafting()->update();
-			Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());*/
-
-			switch (t->id){
-			case TILE_GOLD1:
-			case TILE_GOLD2:
-				Game::instance().getScene()->getInventary()->putItem(GOLD_BAR, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
-				Game::instance().getScene()->getCrafting()->update();
-				Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
-				break;
-			case TILE_BRONZE1:
-			case TILE_BRONZE2:
-				Game::instance().getScene()->getInventary()->putItem(BRONZE_BAR, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
-				Game::instance().getScene()->getCrafting()->update();
-				Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
-				break;
-			case TILE_DIAMOND1:
-			case TILE_DIAMOND2:
-				Game::instance().getScene()->getInventary()->putItem(TILE_DIAMOND1, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
-				Game::instance().getScene()->getCrafting()->update();
-				Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
-				break;
-			default:
-				cout << "TILE ARBRE " << t->id << endl;
-				break;
-			}
-
 			for (size_t i = 0; i < mapSize.x * mapSize.y; i++) {
 				if (map[i].vertexIndex > t->vertexIndex) {
 					map[i].vertexIndex -= 24;
@@ -201,7 +165,7 @@ void TileMap::setTile(int id, int x, int y, bool redraw) {
 			nTiles--;
 			
 			t->id = id;
-		}
+		
 	}
 
 
@@ -239,6 +203,79 @@ void TileMap::setTile(int id, int x, int y, bool redraw) {
 	}
 }
 
+void TileMap::decreaseWorldTileLife(int wx, int wy, int amount) {
+	int xIndex = (wx - position.x) / tileSize;
+	int yIndex = (wy - position.y) / tileSize;
+
+
+	if (xIndex > mapSize.x || yIndex > mapSize.y) {
+		return ;
+	}
+
+	int index = yIndex * mapSize.x + xIndex;
+	//("Index: %d\n", index);
+	int idaux = map[index].id;
+	Tile *t = &map[index];
+
+	if (t->vida > 0 && t->id != 0) {
+		if (t->vida > amount)
+			t->vida -= amount;
+		else
+			t->vida = 0;
+		if (t->vida == 0) {
+			processTileDrop(xIndex, yIndex, t->id);
+			setTile(0, xIndex, yIndex, true);
+			
+			
+		}
+	}
+
+}
+
+
+void TileMap::processTileDrop(int x, int y, int id) {
+
+	printf("processing tile drop %d, %d, %d\n", x,y, id);
+	switch (id) {
+	case TILE_GOLD1:
+	case TILE_GOLD2:
+		Game::instance().getScene()->getInventary()->putItem(GOLD_BAR, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+		Game::instance().getScene()->getCrafting()->update();
+		Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
+		break;
+	case TILE_BRONZE1:
+	case TILE_BRONZE2:
+		Game::instance().getScene()->getInventary()->putItem(BRONZE_BAR, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+		Game::instance().getScene()->getCrafting()->update();
+		Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
+		break;
+	case TILE_DIAMOND1:
+	case TILE_DIAMOND2:
+		Game::instance().getScene()->getInventary()->putItem(TILE_DIAMOND1, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+		Game::instance().getScene()->getCrafting()->update();
+		Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
+		break;
+	default:
+
+		if (id >= TILE_WOOD_1) {
+			for (int tx = x - 1; tx <= x + 1; tx++) {
+				int ty = y - 1;
+
+				Tile * adjTile = &map[ty * mapSize.x + tx];
+
+				if (adjTile->id >= TILE_WOOD_1) {
+					processTileDrop(tx, ty, adjTile->id);
+				}
+			}
+
+			setTile(0, x, y, true);
+			Game::instance().getScene()->getInventary()->putItem(WOOD, Game::instance().getScene()->getInventary()->getFirstEmptySlot(), program);
+			Game::instance().getScene()->getCrafting()->update();
+			Game::instance().getScene()->setPlayerItem(Game::instance().getScene()->getActiveItem());
+		}
+	}
+
+}
 
 void TileMap::setBufferData() {
 
